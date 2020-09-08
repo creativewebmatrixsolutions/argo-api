@@ -14,6 +14,11 @@ interface IConfig {
         CLIENT_SECRET: string;
         CALLBACK_URL: string;
     };
+    gitlab?: {
+        CLIENT_ID: string;
+        CLIENT_SECRET: string;
+        CALLBACK_URL: string;
+    };
     secret: string;
 }
 
@@ -27,9 +32,14 @@ const development: IConfig = {
         MONGODB_ATLAS_OPTION: process.env.MONGODB_ATLAS_OPTION || 'retryWrites=true&w=majority',
     },
     github: {
-        CLIENT_ID: process.env.CLIENT_ID || 'xyz',
-        CLIENT_SECRET: process.env.CLIENT_SECRET || 'uvx',
-        CALLBACK_URL: process.env.CALLBACK_URL || 'wq',
+        CLIENT_ID: process.env.GITHUB_CLIENT_ID || 'xyz',
+        CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || 'uvx',
+        CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || 'wq',
+    },
+    gitlab: {
+        CLIENT_ID: process.env.GITLAB_CLIENT_ID || 'xyz',
+        CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET || 'uvx',
+        CALLBACK_URL: process.env.GITLAB_CALLBACK_URL || 'wq',
     },
     secret: process.env.SECRET || '@QEGTUI'
 };
