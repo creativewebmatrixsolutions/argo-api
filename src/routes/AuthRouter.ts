@@ -37,6 +37,38 @@ router.get(
     }
   );
 
+/**
+ * GET method route
+ * @example http://localhost:PORT/auth/gitlab
+ * @swagger
+ * /auth/gitlab/:
+ *  get:
+ *    description: sign up user to application with gitlab
+ *    tags: ["auth"]
+ *    requestBody:
+ *      description: sign up body
+ *    responses:
+ *      301:
+ *        description: user successfuly signed in
+ *        content:
+ *          appication/json:
+ *            example:
+ *              status: 301
+ */
+router.get('/gitlab', passport.authenticate('gitlab', {
+    scope: ['api']
+}));
+
+router.get(
+    '/gitlab/callback',
+    passport.authenticate('gitlab', { failureRedirect: 'http://localhost:3000/signup' }),
+    async (req, res) => {
+        res.redirect(
+        `http://localhost:3000/dashboard`
+      );
+    }
+  );
+
 
 /**
  * @export {express.Router}

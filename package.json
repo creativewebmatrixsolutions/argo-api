@@ -45,6 +45,7 @@
     "mongoose": "5.9.16",
     "passport": "0.4.0",
     "passport-github": "^1.1.0",
+    "passport-gitlab2": "^5.0.0",
     "ts-node": "8.10.1",
     "util": "0.12.3"
   },

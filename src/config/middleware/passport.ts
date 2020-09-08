@@ -5,10 +5,14 @@ import config from '../env/index';
 import HttpError from '../error';
 import { NextFunction, Request, Response } from 'express';
 import AuthService from '../../components/Auth/service';
+// tslint:disable-next-line: typedef
+const passportGitlab = require('passport-gitlab2');
 
 type GithubStrategyType = typeof passportGithub.Strategy;
+type GitlabStrategyType = typeof passportGitlab.Strategy;
 
 const GithubStrategy: GithubStrategyType = passportGithub.Strategy;
+const GitlabStrategy: GitlabStrategyType = passportGitlab.Strategy;
 
 /**
  * @description
@@ -31,7 +35,7 @@ passport.deserializeUser(async (obj: any, done: Function) => {
 
 /**
  * @description
- * configuring new local strategy
+ * configuring new github strategy
  * and use it in passport
  */
 passport.use(new GithubStrategy(
@@ -42,9 +46,29 @@ passport.use(new GithubStrategy(
     },
     (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
         // save profile here
-        AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: 'github' } });
+        AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: profile.provider } });
 
-        return cb(null, profile);
+        return cb(null, { accessToken, refreshToken, profile });
+    }
+  ));
+
+/**
+ * @description
+ * configuring new github strategy
+ * and use it in passport
+ */
+passport.use(new GitlabStrategy(
+    {
+        clientID: config.gitlab.CLIENT_ID,
+        clientSecret: config.gitlab.CLIENT_SECRET,
+        callbackURL: config.gitlab.CALLBACK_URL
+    },
+    (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
+        // save profile here
+        // console.log(profile);
+        AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: profile.provider } });
+
+        return cb(null, { accessToken, refreshToken, profile });
     }
   ));
 
