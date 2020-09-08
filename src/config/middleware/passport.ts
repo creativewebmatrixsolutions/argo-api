@@ -5,6 +5,8 @@ import config from '../env/index';
 import HttpError from '../error';
 import { NextFunction, Request, Response } from 'express';
 import AuthService from '../../components/Auth/service';
+import JWTTokenService from '../../components/Session/service';
+import { IArgoSessionDto } from '../../components/Session/interface';
 // tslint:disable-next-line: typedef
 const passportGitlab = require('passport-gitlab2');
 
@@ -42,15 +44,15 @@ passport.use(new GithubStrategy(
     {
         clientID: config.github.CLIENT_ID,
         clientSecret: config.github.CLIENT_SECRET,
-        callbackURL: config.github.CALLBACK_URL
+        callbackURL: config.github.CALLBACK_URL,
+        scope: "admin:org repo"
     },
-    (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
+    async (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
         // save profile here
-        AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: profile.provider } });
-
+        await AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: profile.provider } });
         return cb(null, { accessToken, refreshToken, profile });
     }
-  ));
+));
 
 /**
  * @description
@@ -70,7 +72,7 @@ passport.use(new GitlabStrategy(
 
         return cb(null, { accessToken, refreshToken, profile });
     }
-  ));
+));
 
 /**
  * @description Login Required middleware.

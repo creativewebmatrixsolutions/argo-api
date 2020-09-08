@@ -41,7 +41,7 @@ const development: IConfig = {
         CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET || 'uvx',
         CALLBACK_URL: process.env.GITLAB_CALLBACK_URL || 'wq',
     },
-    secret: process.env.SECRET || '@QEGTUI'
+    secret: process.env.SECRET || '@QEGTUIARGOTEST'
 };
 
 const production: IConfig = {

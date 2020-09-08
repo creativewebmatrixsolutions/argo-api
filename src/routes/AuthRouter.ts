@@ -1,6 +1,9 @@
 import { AuthComponent } from '../components';
 import { Router } from 'express';
 import * as passport from 'passport';
+import { IArgoSessionDto } from '../components/Session/interface';
+import JWTTokenService from '../components/Session/service';
+import { profile } from 'console';
 
 /**
  * @constant {express.Router}
@@ -28,14 +31,27 @@ const router: Router = Router();
 router.get('/github', passport.authenticate('github'));
 
 router.get(
-    '/github/callback',
-    passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signup' }),
-    async (req, res) => {
-        res.redirect(
-        `http://localhost:3000/dashboard`
-      );
+  '/github/callback',
+  passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signup' }),
+  async (req, res) => {
+
+    console.log(req.user.accessToken);
+
+    console.log("Profile:- ", req.user.profile);
+
+    const argoSessionDto: IArgoSessionDto = {
+      user_id: req.user.profile.id,
+      access_token: req.user.accessToken,
+      is_active: true
     }
-  );
+    const dtos = await JWTTokenService.findSessionOrCreate(argoSessionDto);
+    const token = await JWTTokenService.GenerateToken(dtos);
+    console.log(token);
+    res.redirect(
+      `http://localhost:3000/dashboard`
+    );
+  }
+);
 
 /**
  * GET method route
@@ -56,18 +72,18 @@ router.get(
  *              status: 301
  */
 router.get('/gitlab', passport.authenticate('gitlab', {
-    scope: ['api']
+  scope: ['api']
 }));
 
 router.get(
-    '/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: 'http://localhost:3000/signup' }),
-    async (req, res) => {
-        res.redirect(
-        `http://localhost:3000/dashboard`
-      );
-    }
-  );
+  '/gitlab/callback',
+  passport.authenticate('gitlab', { failureRedirect: 'http://localhost:3000/signup' }),
+  async (req, res) => {
+    res.redirect(
+      `http://localhost:3000/dashboard`
+    );
+  }
+);
 
 
 /**
