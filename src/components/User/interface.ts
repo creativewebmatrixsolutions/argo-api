@@ -39,4 +39,6 @@ export interface IUserService {
      * @memberof IUserService
      */
     remove(id: string): Promise<IUserModel>;
+
+    findOneAndUpdate(id: string, argo_username: string): Promise<any>;
 }

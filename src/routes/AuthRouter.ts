@@ -1,9 +1,8 @@
-import { AuthComponent } from '../components';
+
 import { Router } from 'express';
 import * as passport from 'passport';
 import { IArgoSessionDto } from '../components/Session/interface';
 import JWTTokenService from '../components/Session/service';
-import { profile } from 'console';
 
 /**
  * @constant {express.Router}
@@ -34,21 +33,15 @@ router.get(
   '/github/callback',
   passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signup' }),
   async (req, res) => {
-
-    console.log(req.user.accessToken);
-
-    console.log("Profile:- ", req.user.profile);
-
     const argoSessionDto: IArgoSessionDto = {
-      user_id: req.user.profile.id,
+      session_id: req.user.profile.id,
       access_token: req.user.accessToken,
       is_active: true
     }
     const dtos = await JWTTokenService.findSessionOrCreate(argoSessionDto);
-    const token = await JWTTokenService.GenerateToken(dtos);
-    console.log(token);
+    const token = await JWTTokenService.generateToken(dtos);
     res.redirect(
-      `http://localhost:3000/dashboard`
+      `http://localhost:3000/dashboard?token=${token}`
     );
   }
 );

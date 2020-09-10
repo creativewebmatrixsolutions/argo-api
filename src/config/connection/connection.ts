@@ -2,21 +2,23 @@ import * as mongoose from 'mongoose';
 import config from '../env/index';
 
 interface IConnectOptions {
-    loggerLevel ? : string;
-    useNewUrlParser ? : boolean;
+    loggerLevel?: string;
+    useNewUrlParser?: boolean;
     useCreateIndex: boolean;
     useUnifiedTopology: boolean;
+    useFindAndModify: boolean;
 }
 
 const connectOptions: IConnectOptions = {
     useNewUrlParser: true,
-    useCreateIndex:true,
-    useUnifiedTopology: true
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
 };
 
 const MONGO_URI: string = `${config.database.MONGODB_URI}${config.database.MONGODB_DB_MAIN}?${config.database.MONGODB_ATLAS_OPTION}`;
 
-export const db: mongoose.Connection = mongoose.createConnection(MONGO_URI, connectOptions);
+export const db: mongoose.Connection = mongoose.createConnection(MONGO_URI, connectOptions,);
 
 // handlers
 db.on('connecting', () => {

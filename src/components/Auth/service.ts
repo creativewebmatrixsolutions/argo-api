@@ -1,5 +1,3 @@
-import * as Joi from 'joi';
-import AuthValidation from './validation';
 import UserModel, { IUserModel, IUser } from '../User/model';
 import { IAuthService } from './interface';
 
@@ -14,7 +12,7 @@ const AuthService: IAuthService = {
      * @returns {Promise <IUserModel>}
      * @memberof AuthService
      */
-    async findProfileOrCreate(body: IUser): Promise < IUserModel > {
+    async findProfileOrCreate(body: IUser): Promise<IUserModel> {
         try {
             // const validate: Joi.ValidationResult < IUserModel > = AuthValidation.createUser(body);
 
@@ -39,10 +37,8 @@ const AuthService: IAuthService = {
 
             if (query) {
                 console.log('User already present');
-
                 return;
             }
-
             const saved: IUserModel = await user.save();
 
             return saved;

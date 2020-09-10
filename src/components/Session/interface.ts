@@ -11,14 +11,19 @@ export interface IArgoJwtTokenService {
     * @returns {Promise<IArgoSessionModel>}
     * @memberof IArgoSessionModel
     */
-    findSessionOrCreate(argoSessionDto: IArgoSessionDto): Promise<IArgoSessionModel>;
+    findSessionOrCreate(argoSessionDto: IArgoSessionDto): Promise<IArgoSessionDto>;
 
-    GenerateToken(argoSessionDto: IArgoSessionDto): Promise<string>;
+    generateToken(argoSessionDto: IArgoSessionDto): Promise<string>;
+
+    findOneByUserId(argo_username: string): Promise<IArgoSessionModel>;
+
+    VerifyToken(token: string): Promise<string>;
+    DecodeToken(req: any): Promise<any>;
 }
 
 export interface IArgoSessionDto {
-    user_id: Number;
-    access_token: String;
+    session_id: string;
+    access_token: string;
     is_active: boolean;
 }
 

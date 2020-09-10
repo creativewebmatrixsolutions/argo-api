@@ -6,7 +6,8 @@ import { Document, Schema } from 'mongoose';
  */
 export interface IProfile {
     id: number;
-    username: string;
+    argo_username: string;
+    provider_username: string;
     avatar_url: string;
     name: string;
     url: string;
@@ -55,7 +56,8 @@ export interface IUser {
  */
 export interface IProfileModel extends Document {
     id: number;
-    username: string;
+    argo_username: string,
+    provider_username: string;
     avatar_url: string;
     name: string;
     url: string;
@@ -135,7 +137,8 @@ const ProviderSchema: Schema = new Schema({
 const UserSchema: Schema = new Schema({
     profile: {
         id: { type: Number, unique: true },
-        username: String,
+        provider_username: String,
+        argo_username: String,
         avatar_url: String,
         name: String,
         url: String,

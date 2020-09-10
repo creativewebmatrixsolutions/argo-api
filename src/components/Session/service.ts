@@ -1,66 +1,82 @@
 import { IArgoJwtTokenService, IArgoSessionDto } from "./interface";
 import ArgoSessionModel, { IArgoSessionModel } from "./model";
 import config from '../../config/env/index';
+import { sign, verify } from 'jsonwebtoken';
 
-import { sign } from 'jsonwebtoken';
-import { resolve } from "path";
-import { rejects } from "assert";
 
 
 const JWTTokenService: IArgoJwtTokenService = {
-    async findSessionOrCreate(body: IArgoSessionDto): Promise<IArgoSessionModel> {
+    async findSessionOrCreate(body: IArgoSessionDto): Promise<IArgoSessionDto> {
         try {
-            // const validate: Joi.ValidationResult < IUserModel > = AuthValidation.createUser(body);
-
-            // if (validate.error) {
-            //     throw new Error(validate.error.message);
-            // }
-
-            // console.log(body);
 
             const user: IArgoSessionModel = new ArgoSessionModel({
-                user_id: body.user_id,
+                session_id: body.session_id,
                 access_token: body.access_token,
                 is_active: body.is_active
             });
 
-            // console.log(user);
-
-            console.log(`I AM IN SERVICE ${body.user_id}`);
-
             const query: IArgoSessionModel = await ArgoSessionModel.findOne({
-                'user_id': body.user_id
+                'session_id': body.session_id
             });
-
-            console.log("i am in query" + query);
 
             if (query) {
                 console.log('user already logged in');
+                const argoSessionDto: IArgoSessionDto = {
+                    session_id: query.session_id,
+                    is_active: query.is_active,
+                    access_token: query.access_token
+                }
                 return query;
             }
-
             const saved: IArgoSessionModel = await user.save();
-
-            return saved;
+            return body;
         } catch (error) {
             throw new Error(error);
         }
     },
-
-    async GenerateToken(argoSessionDto: IArgoSessionDto): Promise<string> {
+    async findOneByUserId(argo_username: string): Promise<IArgoSessionModel> {
+        try {
+            const query: IArgoSessionModel = await ArgoSessionModel.findOne({
+                'argo_username': argo_username
+            });
+            if (query) {
+                console.log('user already logged in');
+                return query;
+            }
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+    async generateToken(argoSessionDto: IArgoSessionDto): Promise<string> {
         let payload = {
-            user_id: argoSessionDto.user_id,
-            access_token: argoSessionDto.access_token,
+            session_id: argoSessionDto.session_id,
             is_active: argoSessionDto.is_active
         }
         return new Promise((resolve, reject) => {
-            sign(payload, config.secret, { expiresIn: '24h', issuer: "www.argoapplive.live" }, (err: Error, encoded: string) => {
+            sign(payload, config.secret, { expiresIn: '8h', issuer: "www.argoapplive.live" }, (err: Error, encoded: string) => {
                 console.log(encoded);
                 resolve(encoded);
             });
         })
 
+    },
+    async VerifyToken(token: string): Promise<any> {
+
+        return new Promise((resolve, reject) => {
+            let decoded = verify(token, config.secret);
+            resolve(decoded);
+        });
+    },
+    async DecodeToken(req: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let jwtToken: any = ""
+            if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
+                jwtToken = req.headers.authorization.split(' ')[1];
+            resolve(jwtToken);
+        });
     }
+
+
 }
 
 export default JWTTokenService;

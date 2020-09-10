@@ -28,19 +28,30 @@ const UserService: IUserService = {
      */
     async findOne(id: string): Promise<IUserModel> {
         try {
-            const validate: Joi.ValidationResult<{
-                id: string
-            }> = UserValidation.getUser({
-                id
+            return await UserModel.findOne({
+                'profile.id': id
             });
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+    async findOneAndUpdate(id: string, argo_username: string): Promise<any> {
+        try {
 
-            if (validate.error) {
-                throw new Error(validate.error.message);
+            const filter = {
+                'profile.id': id
+            }
+            const update = {
+                'profile.argo_username': argo_username
             }
 
-            return await UserModel.findOne({
-                _id: Types.ObjectId(id)
-            });
+            await UserModel.findOneAndUpdate(filter, update)
+            return true;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -53,16 +64,6 @@ const UserService: IUserService = {
      */
     async findOneByGithubId(id: string): Promise<IUserModel> {
         try {
-            // const validate: Joi.ValidationResult < {
-            //     id: string
-            // } > = UserValidation.getUser({
-            //     id
-            // });
-
-            // if (validate.error) {
-            //     throw new Error(validate.error.message);
-            // }
-
             return await UserModel.findOne({
                 profile: { id: Types.ObjectId(id) }
             });
