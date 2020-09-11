@@ -1,5 +1,5 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema } from 'mongoose';
+import { Document, Schema, Types } from 'mongoose';
 /**
  * @export
  * @interface IProfile

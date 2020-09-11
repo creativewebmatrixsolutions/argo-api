@@ -100,19 +100,31 @@ const UserService: IUserService = {
      */
     async remove(id: string): Promise<IUserModel> {
         try {
-            const validate: Joi.ValidationResult<{
-                id: string
-            }> = UserValidation.removeUser({
-                id
-            });
-
-            if (validate.error) {
-                throw new Error(validate.error.message);
+            const filter = {
+                'profile.id': id
             }
+            const user: IUserModel = await UserModel.findOneAndRemove(filter);
 
-            const user: IUserModel = await UserModel.findOneAndRemove({
-                _id: Types.ObjectId(id)
-            });
+            return user;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+    async updateOrganization(orgId: string, userId: string): Promise<IUserModel> {
+        try {
+            const filter = {
+                'profile.id': userId
+            }
+            const update = {
+                $addToSet: { organization: [orgId] }
+            }
+            const user: IUserModel = await UserModel.updateOne(filter, update);
 
             return user;
         } catch (error) {

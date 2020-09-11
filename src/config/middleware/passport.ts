@@ -7,6 +7,7 @@ import { NextFunction, Request, Response } from 'express';
 import AuthService from '../../components/Auth/service';
 
 import { verify } from 'jsonwebtoken';
+import { IUserModel } from '../../components/User/model';
 
 
 // tslint:disable-next-line: typedef
@@ -49,9 +50,8 @@ passport.use(new GithubStrategy(
         callbackURL: config.github.CALLBACK_URL,
         scope: "admin:org repo"
     },
-    async (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
-        // save profile here
-        await AuthService.findProfileOrCreate({ profile: { ...profile._json, provider_username: profile.username, argo_username: profile.username }, provider: { name: profile.provider } });
+    (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
+
         return cb(null, { accessToken, refreshToken, profile });
     }
 ));

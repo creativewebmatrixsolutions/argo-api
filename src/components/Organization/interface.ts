@@ -1,4 +1,5 @@
 import { IOrganizationModel } from './model';
+import { IOrganizationDto } from './organizationDto';
 
 /**
  * @export
@@ -17,14 +18,14 @@ export interface IOrganizationService {
      * @returns {Promise<IOrganizationModel>}
      * @memberof IUserService
      */
-    findOne(code: string): Promise<IOrganizationModel>;
+    findOne(id: string[]): Promise<IOrganizationModel[]>
 
     /**
      * @param {IOrganizationModel} IOrganizationModel
      * @returns {Promise<IOrganizationModel>}
      * @memberof IUserService
      */
-    insert(IOrganizationModel: IOrganizationModel): Promise<IOrganizationModel>;
+    insert(orgDto: IOrganizationDto): Promise<IOrganizationModel>;
 
     /**
      * @param {string} id
@@ -32,4 +33,8 @@ export interface IOrganizationService {
      * @memberof IUserService
      */
     remove(id: string): Promise<IOrganizationModel>;
+
+    insertDefault(id: string): Promise<IOrganizationModel>;
+
+
 }

@@ -1,3 +1,6 @@
+import { Types } from 'mongoose';
+import { IOrganizationModel } from '../Organization/model';
+import OrganizationService from '../Organization/service';
 import UserModel, { IUserModel, IUser } from '../User/model';
 import { IAuthService } from './interface';
 
@@ -14,33 +17,32 @@ const AuthService: IAuthService = {
      */
     async findProfileOrCreate(body: IUser): Promise<IUserModel> {
         try {
-            // const validate: Joi.ValidationResult < IUserModel > = AuthValidation.createUser(body);
-
-            // if (validate.error) {
-            //     throw new Error(validate.error.message);
-            // }
-
-            // console.log(body);
-
             const user: IUserModel = new UserModel({
                 profile: body.profile,
                 provider: body.provider,
             });
-
-            // console.log(user);
-
             const query: IUserModel = await UserModel.findOne({
                 'profile.id': body.profile.id
             });
 
-            console.log(query);
-
             if (query) {
                 console.log('User already present');
-                return;
+                return query;
             }
             const saved: IUserModel = await user.save();
 
+            const org: IOrganizationModel = await OrganizationService.insertDefault(saved.id);
+
+            console.log(org.id);
+            console.log(saved.id);
+
+            const filter = {
+                '_id': Types.ObjectId(saved.id)
+            }
+            const update = {
+                $addToSet: { organization: [saved.id] }
+            }
+            const updatedModel: IUserModel = await UserModel.updateOne(filter, update);
             return saved;
         } catch (error) {
             throw new Error(error);

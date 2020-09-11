@@ -3,6 +3,7 @@ import OrganizationModel, { IOrganizationModel } from './model';
 import OrganizationValidation from './validation';
 import { IOrganizationService } from './interface';
 import { Types } from 'mongoose';
+import { IOrganizationDto } from './organizationDto';
 
 /**
  * @export
@@ -13,7 +14,7 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel[] >}
      * @memberof UserService
      */
-    async findAll(): Promise < IOrganizationModel[] > {
+    async findAll(): Promise<IOrganizationModel[]> {
         try {
             return await OrganizationModel.find({});
         } catch (error) {
@@ -26,21 +27,21 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel >}
      * @memberof UserService
      */
-    async findOne(id: string): Promise < IOrganizationModel > {
+    async findOne(id: string[]): Promise<IOrganizationModel[]> {
         try {
-            const validate: Joi.ValidationResult < {
-                id: string
-            } > = OrganizationValidation.getUser({
-                id
-            });
-
-            if (validate.error) {
-                throw new Error(validate.error.message);
+            console.log(id);
+            let array: Array<Types.ObjectId> = [];
+            for (let i = 0; i < id.length; i++) {
+                console.log(i);
+                array[i] = Types.ObjectId(id[i]);
             }
-
-            return await OrganizationModel.findOne({
-                _id: Types.ObjectId(id)
+            const test: IOrganizationModel[] = await OrganizationModel.find({
+                '_id': {
+                    $in: array
+                }
             });
+            return test;
+
         } catch (error) {
             throw new Error(error.message);
         }
@@ -51,16 +52,28 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel >}
      * @memberof UserService
      */
-    async insert(body: IOrganizationModel): Promise < IOrganizationModel > {
+    async insert(body: IOrganizationDto): Promise<IOrganizationModel> {
         try {
-            const validate: Joi.ValidationResult < IOrganizationModel > = OrganizationValidation.createUser(body);
-
-            if (validate.error) {
-                throw new Error(validate.error.message);
+            const filter = await OrganizationModel.findOne({
+                'name': body.name
+            });
+            if (filter) {
+                throw new Error('Organization already exist with this name');
             }
-
             const user: IOrganizationModel = await OrganizationModel.create(body);
+            return user;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
 
+    async insertDefault(id: string): Promise<IOrganizationModel> {
+        try {
+            const body = {
+                name: 'default',
+                users: [id]
+            }
+            const user: IOrganizationModel = await OrganizationModel.create(body);
             return user;
         } catch (error) {
             throw new Error(error.message);
@@ -72,11 +85,11 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel >}
      * @memberof UserService
      */
-    async remove(id: string): Promise < IOrganizationModel > {
+    async remove(id: string): Promise<IOrganizationModel> {
         try {
-            const validate: Joi.ValidationResult < {
+            const validate: Joi.ValidationResult<{
                 id: string
-            } > = OrganizationValidation.removeUser({
+            }> = OrganizationValidation.removeUser({
                 id
             });
 

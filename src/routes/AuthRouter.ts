@@ -1,8 +1,10 @@
 
 import { Router } from 'express';
 import * as passport from 'passport';
+import AuthService from '../components/Auth/service';
 import { IArgoSessionDto } from '../components/Session/interface';
 import JWTTokenService from '../components/Session/service';
+import { IUserModel } from '../components/User/model';
 
 /**
  * @constant {express.Router}
@@ -33,11 +35,21 @@ router.get(
   '/github/callback',
   passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signup' }),
   async (req, res) => {
+
+    const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
+      profile:
+      {
+        ...req.user.profile._json, provider_username: req.user.profile.username,
+        argo_username: req.user.profile.username
+      }, provider: { name: req.user.profile.provider }
+    });
+
     const argoSessionDto: IArgoSessionDto = {
-      session_id: req.user.profile.id,
+      session_id: userProfileModel.id,
       access_token: req.user.accessToken,
-      is_active: true
+      is_active: true,
     }
+
     const dtos = await JWTTokenService.findSessionOrCreate(argoSessionDto);
     const token = await JWTTokenService.generateToken(dtos);
     res.redirect(

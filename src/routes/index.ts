@@ -4,6 +4,8 @@ import * as passportConfig from '../config/middleware/passport';
 import * as swaggerUi from 'swagger-ui-express';
 import AuthRouter from './AuthRouter';
 import ProfileRouter from './ProfileRouter';
+import OrganizationRouter from './OrganizationRouter';
+
 let swaggerDoc: Object;
 
 try {
@@ -29,13 +31,23 @@ export function init(app: express.Application): void {
      *  Also, check if user authenticated
      * @constructs
      */
-    app.use('/v1/profile', passportConfig.isAuthenticated, ProfileRouter);
+    app.use('/profile', passportConfig.isAuthenticated, ProfileRouter);
 
+    /**
+    * @description
+    *  Forwards any requests to the /org URI to our UserRouter
+    *  Also, check if user authenticated
+    * @constructs
+    */
+
+    app.use('/org', passportConfig.isAuthenticated, OrganizationRouter);
     /**
      * @description Forwards any requests to the /auth URI to our AuthRouter
      * @constructs
      */
     app.use('/auth', AuthRouter);
+
+
 
     /**
      * @description

@@ -31,7 +31,7 @@ export interface IDeploymentsModel extends Document {
  */
 export interface IOrganizationModel extends Document {
     name: string;
-    deployments: IDeploymentsModel[];
+    deployments?: IDeploymentsModel[];
     users: string[];
 }
 
@@ -79,7 +79,7 @@ const DeploymentsSchema: Schema = new Schema({
  */
 const OrganizationSchema: Schema = new Schema({
     name: { type: String, default: 'default' },
-    deployments: [DeploymentsSchema],
+    deployments: { type: [DeploymentsSchema], default: [] },
     users: { type: [String], default: [] }
 }, {
     collection: 'organizations',

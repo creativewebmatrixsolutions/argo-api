@@ -41,4 +41,6 @@ export interface IUserService {
     remove(id: string): Promise<IUserModel>;
 
     findOneAndUpdate(id: string, argo_username: string): Promise<any>;
+
+    updateOrganization(orgId: string, userId: string): Promise<IUserModel>;
 }
