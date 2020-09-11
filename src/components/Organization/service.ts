@@ -29,18 +29,17 @@ const OrganizationService: IOrganizationService = {
      */
     async findOne(id: string[]): Promise<IOrganizationModel[]> {
         try {
-            console.log(id);
             let array: Array<Types.ObjectId> = [];
             for (let i = 0; i < id.length; i++) {
                 console.log(i);
                 array[i] = Types.ObjectId(id[i]);
             }
-            const test: IOrganizationModel[] = await OrganizationModel.find({
+            const orgModel: IOrganizationModel[] = await OrganizationModel.find({
                 '_id': {
                     $in: array
                 }
             });
-            return test;
+            return orgModel;
 
         } catch (error) {
             throw new Error(error.message);

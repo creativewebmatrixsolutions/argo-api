@@ -40,7 +40,7 @@ const AuthService: IAuthService = {
                 '_id': Types.ObjectId(saved.id)
             }
             const update = {
-                $addToSet: { organization: [saved.id] }
+                $addToSet: { organization: [org.id] }
             }
             const updatedModel: IUserModel = await UserModel.updateOne(filter, update);
             return saved;
