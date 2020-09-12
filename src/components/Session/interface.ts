@@ -1,6 +1,6 @@
 /**
  * @export
- * @interface IUserService
+ * @interface IArgoSerssionService
  */
 
 import { IArgoSessionModel } from "./model";
@@ -19,6 +19,8 @@ export interface IArgoJwtTokenService {
 
     VerifyToken(token: string): Promise<string>;
     DecodeToken(req: any): Promise<any>;
+
+    FindAndRemove(session_id: string): Promise<any>;
 }
 
 export interface IArgoSessionDto {
