@@ -2,6 +2,8 @@ import { IArgoJwtTokenService, IArgoSessionDto } from "./interface";
 import ArgoSessionModel, { IArgoSessionModel } from "./model";
 import config from '../../config/env/index';
 import { sign, verify } from 'jsonwebtoken';
+import { Types } from "mongoose";
+import { any } from "joi";
 
 
 
@@ -73,6 +75,16 @@ const JWTTokenService: IArgoJwtTokenService = {
             if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
                 jwtToken = req.headers.authorization.split(' ')[1];
             resolve(jwtToken);
+        });
+    },
+    async FindAndRemove(session_id: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const filter = {
+                'session_id': Types.ObjectId(session_id)
+            };
+            const isDeleted: any = ArgoSessionModel.deleteOne(filter)
+            console.log(isDeleted);
+            resolve(isDeleted);
         });
     }
 

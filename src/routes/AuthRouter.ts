@@ -58,6 +58,16 @@ router.get(
   }
 );
 
+router.delete('/logout', async (req, res) => {
+  let token: any = await JWTTokenService.DecodeToken(req);
+  let verifiedToken: any = await JWTTokenService.VerifyToken(token);
+  await JWTTokenService.FindAndRemove(verifiedToken.session_id);
+  await req.logOut();
+  req.session = null;
+  res.clearCookie("api.sid");
+  return res.redirect('http://localhost:3000/signup')
+});
+
 /**
  * GET method route
  * @example http://localhost:PORT/auth/gitlab
@@ -89,6 +99,8 @@ router.get(
     );
   }
 );
+
+
 
 
 /**
