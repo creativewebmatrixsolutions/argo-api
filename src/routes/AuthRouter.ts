@@ -31,44 +31,43 @@ const router: Router = Router();
 router.get('/github', passport.authenticate('github'));
 
 router.get(
-  '/github/callback',
-  passport.authenticate('github', {
-      failureRedirect: 'http://localhost:3000/signup',
-  }),
-  async (req, res) => {
-      const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
-          profile: {
-              ...req.user.profile._json,
-              provider_username: req.user.profile.username,
-              argo_username: req.user.profile.username,
-          },
-          provider: { name: req.user.profile.provider },
-      });
+    '/github/callback',
+    passport.authenticate('github', {
+        failureRedirect: 'http://localhost:3000/login',
+    }),
+    async (req, res) => {
+        const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
+            profile: {
+                ...req.user.profile._json,
+                provider_username: req.user.profile.username,
+                argo_username: req.user.profile.username,
+            },
+            provider: { name: req.user.profile.provider },
+        });
 
-      const argoSessionDto: IArgoSessionDto = {
-          session_id: userProfileModel.id,
-          access_token: req.user.accessToken,
-          is_active: true,
-      };
+        const argoSessionDto: IArgoSessionDto = {
+            session_id: userProfileModel.id,
+            access_token: req.user.accessToken,
+            is_active: true,
+        };
 
-      const dtos: IArgoSessionDto = await JWTTokenService.findSessionOrCreate(
-      argoSessionDto
-    );
-      const token: string = await JWTTokenService.generateToken(dtos);
+        const dtos: IArgoSessionDto = await JWTTokenService.findSessionOrCreate(
+            argoSessionDto
+        );
+        const token: string = await JWTTokenService.generateToken(dtos);
 
-      res.redirect(`http://localhost:3000/dashboard?token=${token}`);
-  }
+        res.redirect(`http://localhost:3000/callback/github?token=${token}`);
+    }
 );
 
 router.delete('/logout', async (req, res) => {
     const token: any = await JWTTokenService.DecodeToken(req);
     const verifiedToken: any = await JWTTokenService.VerifyToken(token);
-
     await JWTTokenService.FindAndRemove(verifiedToken.session_id);
     await req.logOut();
     req.session = null;
     res.clearCookie('api.sid');
-    return res.redirect('http://localhost:3000/signup');
+    res.send(200).json({ success: true });
 });
 
 /**
@@ -90,20 +89,20 @@ router.delete('/logout', async (req, res) => {
  *              status: 301
  */
 router.get(
-  '/gitlab',
-  passport.authenticate('gitlab', {
-      scope: ['api'],
-  })
+    '/gitlab',
+    passport.authenticate('gitlab', {
+        scope: ['api'],
+    })
 );
 
 router.get(
-  '/gitlab/callback',
-  passport.authenticate('gitlab', {
-      failureRedirect: 'http://localhost:3000/signup',
-  }),
-  async (req, res) => {
-      res.redirect(`http://localhost:3000/dashboard`);
-  }
+    '/gitlab/callback',
+    passport.authenticate('gitlab', {
+        failureRedirect: 'http://localhost:3000/signup',
+    }),
+    async (req, res) => {
+        res.redirect(`http://localhost:3000/dashboard`);
+    }
 );
 
 /**
