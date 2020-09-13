@@ -1,5 +1,6 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Types } from 'mongoose';
+import { IOrganization } from '../Organization/model';
 /**
  * @export
  * @interface IProfile
@@ -45,7 +46,7 @@ export interface IUser {
     provider: IProvider;
     dateOfEntry?: Date;
     lastUpdated?: Date;
-    organization?: string[];
+    organizations?: [string[]];
 }
 
 
@@ -97,7 +98,7 @@ export interface IUserModel extends Document {
     provider: IProviderModel;
     dateOfEntry?: Date;
     lastUpdated?: Date;
-    organization?: string[];
+    organizations?: [IOrganization['_id']];
 }
 
 
@@ -167,7 +168,10 @@ const UserSchema: Schema = new Schema({
         type: Date,
         default: new Date()
     },
-    organization: { type: [String], default: [] }
+    organizations: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Organization',
+    }
 }, {
     collection: 'users',
     versionKey: false

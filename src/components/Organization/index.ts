@@ -29,9 +29,9 @@ export async function findAll(req: Request, res: Response, next: NextFunction): 
  */
 export async function findOne(req: Request, res: Response, next: NextFunction): Promise < void > {
     try {
-        const user: IOrganization = await OrganizationService.findOne(req.params.id);
+        const organization: IOrganization[] = await OrganizationService.findOne(req.params.id);
 
-        res.status(200).json(user);
+        res.status(200).json(organization);
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }

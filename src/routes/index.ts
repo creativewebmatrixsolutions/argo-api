@@ -5,6 +5,9 @@ import * as swaggerUi from 'swagger-ui-express';
 import AuthRouter from './AuthRouter';
 import ProfileRouter from './ProfileRouter';
 import OrganizationRouter from './OrganizationRouter';
+import RepositoryRouter from './RepositoryRouter';
+
+import RepositoryService from '../components/Repository/service';
 
 let swaggerDoc: Object;
 
@@ -40,7 +43,16 @@ export function init(app: express.Application): void {
     * @constructs
     */
 
-    app.use('/organization', passportConfig.isAuthenticated , OrganizationRouter);
+    app.use('/organization', OrganizationRouter);
+
+    /**
+    * @description
+    *  Forwards any requests to the /org URI to our UserRouter
+    *  Also, check if user authenticated
+    * @constructs
+    */
+    app.use('/repository', RepositoryRouter);
+
     /**
      * @description Forwards any requests to the /auth URI to our AuthRouter
      * @constructs

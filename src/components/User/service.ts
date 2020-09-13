@@ -29,7 +29,7 @@ const UserService: IUserService = {
     async findOne(id: string): Promise<IUserModel> {
         try {
             return await UserModel.findOne({
-                '_id': Types.ObjectId(id)
+                _id: Types.ObjectId(id)
             });
         } catch (error) {
             throw new Error(error.message);
