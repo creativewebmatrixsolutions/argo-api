@@ -24,11 +24,18 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganization >}
      * @memberof UserService
      */
-    async findOne(id: string): Promise < IOrganization > {
+    async findOne(id: any): Promise < IOrganization[] > {
         try {
-            const organization: IOrganization = await OrganizationModel.findOne({
-                _id: id
-            });
+            console.log("i am", id);
+            const array: Types.ObjectId[] = [];
+            for (let i: number = 0; i < id.length; i += 1) {
+                console.log(i);
+                array[i] = Types.ObjectId(id[i]);
+            }
+            const organization: IOrganization[] = await OrganizationModel.find({
+                _id: {
+                    $in: array
+                }});
 
             return organization;
         } catch (error) {

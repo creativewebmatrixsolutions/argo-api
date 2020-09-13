@@ -1,4 +1,4 @@
-import { IRepository } from './model';
+import { IRepository } from '../Organization/model';
 
 /**
  * @export
@@ -12,31 +12,31 @@ export interface IRepositoryService {
     //  */
     // findAll(orgId: string): Promise<IRepository[]>;
 
-    /**
-     * @param {string} id
-     * @returns {Promise<IRepository>}
-     * @memberof IRepositoryService
-     */
-    findOne(id: string): Promise<IRepository>;
+    // /**
+    //  * @param {string} id
+    //  * @returns {Promise<IRepository>}
+    //  * @memberof IRepositoryService
+    //  */
+    // findOne(id: string): Promise<IRepository>;
 
     /**
      * @param {IOrganization} IOrganizationModel
      * @returns {Promise<IOrganization>}
      * @memberof IRepositoryService
      */
-    insert(orgDto: IRepository): Promise<IRepository>;
+    insert(repository: IRepository, organizationId: string): Promise<IRepository>;
 
-    /**
-     * @param {string} id
-     * @returns {Promise<IOrganization>}
-     * @memberof IRepositoryService
-     */
-    remove(id: string): Promise<IRepository>;
+    // /**
+    //  * @param {string} id
+    //  * @returns {Promise<IOrganization>}
+    //  * @memberof IRepositoryService
+    //  */
+    // remove(id: string): Promise<IRepository>;
 
-    /**
-     * @param {string} id
-     * @returns {Promise<IRepository>}
-     * @memberof IRepositoryService
-     */
-    insertDefault(id: string): Promise<IRepository>;
+    // /**
+    //  * @param {string} id
+    //  * @returns {Promise<IRepository>}
+    //  * @memberof IRepositoryService
+    //  */
+    // insertDefault(id: string): Promise<IRepository>;
 }

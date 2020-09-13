@@ -1,7 +1,19 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Model } from 'mongoose';
 import { IUserModel } from '../User/model';
-import { IRepository } from '../Repository/model';
+// import { IRepository } from '../Repository/model';
+
+/**
+ * @export
+ * @interface IRepository
+ * @extends { Document }
+ */
+export interface IRepository extends Document {
+    name: String;
+    url: String;    
+    webHook: String;
+    deployments: [IDeployment['_id']];
+}
 
 /**
  * @export
@@ -27,6 +39,16 @@ export interface IOrganization extends Document {
     users: [IUserModel['_id']];
 }
 
+const RepositorySchema: Schema = new Schema({
+    name: String,
+    url: String,    
+    webHook: String,
+    deployments: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Deployment',
+    }
+});
+
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
@@ -37,10 +59,7 @@ const DeploymentSchema: Schema = new Schema({
 const OrganizationSchema: Schema = new Schema({
     name: { type: String, default: 'default', required: true },
     image: { type: String, required: false  },
-    repositories: { 
-        type: [Schema.Types.ObjectId],
-        ref: 'Repository',
-    },
+    repositories: [RepositorySchema],
     users: { 
         type: [Schema.Types.ObjectId],
         ref: 'UserModel',

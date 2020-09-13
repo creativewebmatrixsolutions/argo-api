@@ -35,6 +35,35 @@ const router: Router = Router();
 router.get('/', UserComponent.findAll);
 
 /**
+ * GET method route 
+ * @example http://localhost:PORT/v1/users/:id
+ * 
+ * @swagger
+ * /v1/users/{id}:
+ *  get:
+ *    description: Get user by userId
+ *    tags: ["users"]
+ *    security:
+ *      - cookieAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        description: the unique userId
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: return user by id
+ *        content:
+ *          application/json:
+ *            schema:
+ *              oneOf:
+ *                - $ref: '#/components/schemas/UserSchema'
+ */
+router.get('/:id', UserComponent.findOne);
+
+/**
  * POST method route
  * @example http://localhost:PORT/v1/users
  * 

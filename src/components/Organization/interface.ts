@@ -17,7 +17,7 @@ export interface IOrganizationService {
      * @returns {Promise<IOrganization>}
      * @memberof IOrganizationService
      */
-    findOne(id: string): Promise<IOrganization>;
+    findOne(id: any): Promise<IOrganization[]>;
 
     /**
      * @param {IOrganization} IOrganizationModel
