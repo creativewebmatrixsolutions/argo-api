@@ -4,8 +4,6 @@ import { IUserModel } from './model';
 import { NextFunction, Request, Response } from 'express';
 
 import JWTTokenService from '../Session/service';
-import OrganizationService from '../Organization/service';
-import { IOrganizationModel } from '../Organization/model';
 
 
 /**
@@ -20,39 +18,6 @@ export async function findAll(req: Request, res: Response, next: NextFunction): 
         const users: IUserModel[] = await UserService.findAll();
 
         res.status(200).json(users);
-    } catch (error) {
-        next(new HttpError(error.message.status, error.message));
-    }
-}
-
-/**
- * @export
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise < void >}
- */
-export async function findOne(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-
-        const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
-
-        console.log(argoDecodedHeaderToken);
-
-        const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-
-        console.log("Deserialized Token: ", deserializedToken)
-
-        //const argoSessionModel: IArgoSessionModel = await JWTTokenService.findOneByUserId(deserializedToken.session_id.toString());
-
-        // console.log(argoSessionModel);
-        console.log(deserializedToken.session_id);
-        const user: IUserModel = await UserService.findOne(deserializedToken.session_id);
-
-        console.log(user)
-
-        const org: IOrganizationModel[] = await OrganizationService.findOne(user.organization)
-        res.status(200).json({ user: user, org: org });
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }

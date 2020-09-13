@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IOrganizationModel } from '../Organization/model';
+import { IOrganization } from '../Organization/model';
 import OrganizationService from '../Organization/service';
 import UserModel, { IUserModel, IUser } from '../User/model';
 import { IAuthService } from './interface';
@@ -31,7 +31,7 @@ const AuthService: IAuthService = {
             }
             const saved: IUserModel = await user.save();
 
-            const org: IOrganizationModel = await OrganizationService.insertDefault(saved.id);
+            const org: IOrganization = await OrganizationService.insertDefault(saved.id);
 
             console.log(org.id);
             console.log(saved.id);

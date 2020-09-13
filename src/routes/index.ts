@@ -40,7 +40,7 @@ export function init(app: express.Application): void {
     * @constructs
     */
 
-    app.use('/org', passportConfig.isAuthenticated, OrganizationRouter);
+    app.use('/organization', passportConfig.isAuthenticated , OrganizationRouter);
     /**
      * @description Forwards any requests to the /auth URI to our AuthRouter
      * @constructs
