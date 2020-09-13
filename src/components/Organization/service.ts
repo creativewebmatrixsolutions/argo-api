@@ -26,10 +26,8 @@ const OrganizationService: IOrganizationService = {
      */
     async findOne(id: any): Promise < IOrganization[] > {
         try {
-            console.log("i am", id);
             const array: Types.ObjectId[] = [];
             for (let i: number = 0; i < id.length; i += 1) {
-                console.log(i);
                 array[i] = Types.ObjectId(id[i]);
             }
             const organization: IOrganization[] = await OrganizationModel.find({

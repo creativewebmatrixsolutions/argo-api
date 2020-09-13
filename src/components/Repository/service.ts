@@ -45,16 +45,13 @@ const RepositoryService: IRepositoryService = {
      */
     async insert(repository: IRepository, organizationId: string): Promise < IRepository > {
         try {
-            console.log(organizationId);
             const organization: IOrganization = await OrganizationModel.findOne({
                 _id: organizationId
             });
             if (!organization) {
                 throw new Error('Organization with given Id does not exist');
             }
-            console.log(organization);
             const repo: IRepository = organization.repositories.find((r: IRepository) => r.name === repository.name);
-            console.log(repo);
             if (repo !== undefined) {
                 throw new Error('Repository with given name already exist');
             }

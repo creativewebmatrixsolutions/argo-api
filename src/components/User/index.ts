@@ -42,13 +42,9 @@ export async function findOne(req: Request, res: Response, next: NextFunction): 
 
         console.log('Deserialized Token: ', deserializedToken);
 
-        // const argoSessionModel: IArgoSessionModel = await JWTTokenService.findOneByUserId(deserializedToken.session_id.toString());
-
-        // console.log(argoSessionModel);
         console.log(deserializedToken.session_id);
         const user: IUserModel = await UserService.findOne(deserializedToken.session_id);
 
-        console.log("this is", user);
         const org: IOrganization[] = await OrganizationService.findOne(user.organizations);
 
         res.status(200).json({ user, org });

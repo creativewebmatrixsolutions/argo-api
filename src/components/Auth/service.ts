@@ -33,9 +33,6 @@ const AuthService: IAuthService = {
 
             const org: IOrganization = await OrganizationService.insertDefault(saved.id);
 
-            console.log("findProfileOrCreate", org.id);
-            console.log("findProfileOrCreate", saved.id);
-
             const filter = {
                 '_id': Types.ObjectId(saved.id)
             }
