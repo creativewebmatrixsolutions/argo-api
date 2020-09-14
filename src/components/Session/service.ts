@@ -86,9 +86,21 @@ const JWTTokenService: IArgoJwtTokenService = {
             console.log(isDeleted);
             resolve(isDeleted);
         });
+    },
+    async FindOneBySessionId(session_id: string): Promise<IArgoSessionModel> {
+        try {
+            const query: IArgoSessionModel = await ArgoSessionModel.findOne({
+                'session_id': session_id
+            });
+            if (query) {
+                console.log('user already logged in');
+                return query;
+            }
+            return null;
+        } catch (error) {
+            throw new Error(error);
+        }
     }
-
-
 }
 
 export default JWTTokenService;

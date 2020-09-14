@@ -10,7 +10,7 @@ import { IUserModel } from '../User/model';
  */
 export interface IRepository extends Document {
     name: String;
-    url: String;    
+    url: String;
     webHook: String;
     deployments: [IDeployment['_id']];
 }
@@ -41,7 +41,7 @@ export interface IOrganization extends Document {
 
 const RepositorySchema: Schema = new Schema({
     name: String,
-    url: String,    
+    url: String,
     webHook: String,
     deployments: {
         type: [Schema.Types.ObjectId],
@@ -52,15 +52,15 @@ const RepositorySchema: Schema = new Schema({
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
-    log: String,
+    log: [String],
     createdAt: { type: Date, default: new Date() }
 });
 
 const OrganizationSchema: Schema = new Schema({
     name: { type: String, default: 'default', required: true },
-    image: { type: String, required: false  },
+    image: { type: String, required: false },
     repositories: [RepositorySchema],
-    users: { 
+    users: {
         type: [Schema.Types.ObjectId],
         ref: 'UserModel',
     }
