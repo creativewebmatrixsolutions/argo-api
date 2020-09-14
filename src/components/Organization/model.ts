@@ -1,90 +1,73 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema } from 'mongoose';
+import { Document, Schema, Model } from 'mongoose';
+import { IUserModel } from '../User/model';
+// import { IRepository } from '../Repository/model';
 
 /**
  * @export
- * @interface IOrganizationModel
- * @extends {Document}
+ * @interface IRepository
+ * @extends { Document }
  */
-export interface IRepositoriesDetailModel extends Document {
-    commit_id: string;
-    repo_url: string;
-    logs: string;
-    site_preview: string;
-    date_deploy: Date;
+export interface IRepository extends Document {
+    name: String;
+    url: String;    
+    webHook: String;
+    deployments: [IDeployment['_id']];
 }
 
 /**
  * @export
- * @interface IOrganizationModel
+ * @interface IDeployment
  * @extends {Document}
  */
-export interface IDeploymentsModel extends Document {
-    total_deployments: number;
-    repositories: IRepositoriesDetailModel[];
+export interface IDeployment extends Document {
+    sitePreview: String;
+    commitId: String;
+    log: String;
+    createdAt: Date;
 }
 
 /**
  * @export
- * @interface IOrganizationModel
+ * @interface IOrganization
  * @extends {Document}
  */
-export interface IOrganizationModel extends Document {
-    name: string;
-    deployments: IDeploymentsModel[];
-    users: string[];
+export interface IOrganization extends Document {
+    name: String;
+    image: String;
+    repositories: [IRepository['_id']];
+    users: [IUserModel['_id']];
 }
 
-const RepositoriesDetailSchema: Schema = new Schema({
-    commit_id: String,
-    repo_url: String,
-    logs: String,
-    site_preview: String,
-    date_deploy: { type: Date, default: new Date() },
+const RepositorySchema: Schema = new Schema({
+    name: String,
+    url: String,    
+    webHook: String,
+    deployments: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Deployment',
+    }
 });
 
-const DeploymentsSchema: Schema = new Schema({
-    total_deployments: { type: Number, default: 0 },
-    repositories: [RepositoriesDetailSchema]
+const DeploymentSchema: Schema = new Schema({
+    sitePreview: String,
+    commitId: String,
+    log: String,
+    createdAt: { type: Date, default: new Date() }
 });
 
-/**
- * @swagger
- * components:
- *  schemas:
- *    OrganizationSchema:
- *      required:
- *        - email
- *        - name
- *      properties:
- *        id:
- *          type: string
- *        name:
- *          type: string
- *        email:
- *          type: string
- *        password:
- *          type: string
- *        passwordResetToken:
- *          type: string
- *        passwordResetExpires:
- *          type: string
- *          format: date
- *        tokens:
- *          type: array
- *    Users:
- *      type: array
- *      items:
- *        $ref: '#/components/schemas/UserSchema'
- */
 const OrganizationSchema: Schema = new Schema({
-    name: { type: String, default: 'default' },
-    deployments: [DeploymentsSchema],
-    users: { type: [String], default: [] }
+    name: { type: String, default: 'default', required: true },
+    image: { type: String, required: false  },
+    repositories: [RepositorySchema],
+    users: { 
+        type: [Schema.Types.ObjectId],
+        ref: 'UserModel',
+    }
 }, {
-    collection: 'organizations',
+    collection: 'organizationsdb',
     versionKey: false
 });
 
-
-export default connections.db.model<IOrganizationModel>('OrganizationModel', OrganizationSchema);
+export const DeploymentModel: Model<IDeployment> = connections.db.model<IDeployment>('Deployment', DeploymentSchema);
+export const OrganizationModel: Model<IOrganization> = connections.db.model<IOrganization>('Organization', OrganizationSchema);

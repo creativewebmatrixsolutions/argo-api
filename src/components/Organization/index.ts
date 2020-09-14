@@ -1,6 +1,6 @@
 import OrganizationService from './service';
 import { HttpError } from '../../config/error';
-import { IOrganizationModel } from './model';
+import { IOrganization } from './model';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -12,7 +12,7 @@ import { NextFunction, Request, Response } from 'express';
  */
 export async function findAll(req: Request, res: Response, next: NextFunction): Promise < void > {
     try {
-        const users: IOrganizationModel[] = await OrganizationService.findAll();
+        const users: IOrganization[] = await OrganizationService.findAll();
 
         res.status(200).json(users);
     } catch (error) {
@@ -29,9 +29,9 @@ export async function findAll(req: Request, res: Response, next: NextFunction): 
  */
 export async function findOne(req: Request, res: Response, next: NextFunction): Promise < void > {
     try {
-        const user: IOrganizationModel = await OrganizationService.findOne(req.params.id);
+        const organization: IOrganization[] = await OrganizationService.findOne(req.params.id);
 
-        res.status(200).json(user);
+        res.status(200).json(organization);
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }
@@ -46,9 +46,9 @@ export async function findOne(req: Request, res: Response, next: NextFunction): 
  */
 export async function create(req: Request, res: Response, next: NextFunction): Promise < void > {
     try {
-        const user: IOrganizationModel = await OrganizationService.insert(req.body);
+        const organization: IOrganization = await OrganizationService.insert(req.body);
 
-        res.status(201).json(user);
+        res.status(201).json(organization);
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }
@@ -63,9 +63,9 @@ export async function create(req: Request, res: Response, next: NextFunction): P
  */
 export async function remove(req: Request, res: Response, next: NextFunction): Promise < void > {
     try {
-        const user: IOrganizationModel = await OrganizationService.remove(req.params.id);
+        const organization: IOrganization = await OrganizationService.remove(req.params.id);
 
-        res.status(200).json(user);
+        res.status(200).json(organization);
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }

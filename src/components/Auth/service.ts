@@ -1,5 +1,6 @@
-import * as Joi from 'joi';
-import AuthValidation from './validation';
+import { Types } from 'mongoose';
+import { IOrganization } from '../Organization/model';
+import OrganizationService from '../Organization/service';
 import UserModel, { IUserModel, IUser } from '../User/model';
 import { IAuthService } from './interface';
 
@@ -14,37 +15,31 @@ const AuthService: IAuthService = {
      * @returns {Promise <IUserModel>}
      * @memberof AuthService
      */
-    async findProfileOrCreate(body: IUser): Promise < IUserModel > {
+    async findProfileOrCreate(body: IUser): Promise<IUserModel> {
         try {
-            // const validate: Joi.ValidationResult < IUserModel > = AuthValidation.createUser(body);
-
-            // if (validate.error) {
-            //     throw new Error(validate.error.message);
-            // }
-
-            // console.log(body);
-
             const user: IUserModel = new UserModel({
                 profile: body.profile,
                 provider: body.provider,
             });
-
-            // console.log(user);
-
             const query: IUserModel = await UserModel.findOne({
                 'profile.id': body.profile.id
             });
 
-            console.log(query);
-
             if (query) {
                 console.log('User already present');
-
-                return;
+                return query;
             }
-
             const saved: IUserModel = await user.save();
 
+            const org: IOrganization = await OrganizationService.insertDefault(saved.id);
+
+            const filter = {
+                '_id': Types.ObjectId(saved.id)
+            }
+            const update = {
+                $addToSet: { organizations: [Types.ObjectId(org.id)] }
+            }
+            const updatedModel: IUserModel = await UserModel.updateOne(filter, update);
             return saved;
         } catch (error) {
             throw new Error(error);

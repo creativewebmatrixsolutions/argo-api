@@ -6,9 +6,18 @@ import HttpError from '../error';
 import { NextFunction, Request, Response } from 'express';
 import AuthService from '../../components/Auth/service';
 
+import { verify } from 'jsonwebtoken';
+import { IUserModel } from '../../components/User/model';
+
+
+// tslint:disable-next-line: typedef
+const passportGitlab = require('passport-gitlab2');
+
 type GithubStrategyType = typeof passportGithub.Strategy;
+type GitlabStrategyType = typeof passportGitlab.Strategy;
 
 const GithubStrategy: GithubStrategyType = passportGithub.Strategy;
+const GitlabStrategy: GitlabStrategyType = passportGitlab.Strategy;
 
 /**
  * @description
@@ -25,36 +34,84 @@ passport.serializeUser((user: any, done: Function) => {
  * checks if user exists in database
  * if everything ok, proceed to route
  */
-passport.deserializeUser(async (obj: any, done: Function) => {
+passport.deserializeUser((obj: any, done: Function) => {
     done(null, obj);
 });
 
 /**
  * @description
- * configuring new local strategy
+ * configuring new github strategy
  * and use it in passport
  */
 passport.use(new GithubStrategy(
     {
         clientID: config.github.CLIENT_ID,
         clientSecret: config.github.CLIENT_SECRET,
-        callbackURL: config.github.CALLBACK_URL
+        callbackURL: config.github.CALLBACK_URL,
+        scope: "admin:org repo"
+    },
+    (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
+
+        return cb(null, { accessToken, refreshToken, profile });
+    }
+));
+
+/**
+ * @description
+ * configuring new github strategy
+ * and use it in passport
+ */
+passport.use(new GitlabStrategy(
+    {
+        clientID: config.gitlab.CLIENT_ID,
+        clientSecret: config.gitlab.CLIENT_SECRET,
+        callbackURL: config.gitlab.CALLBACK_URL
     },
     (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
         // save profile here
-        AuthService.findProfileOrCreate({ profile: { ...profile._json, username: profile.username }, provider: { name: 'github' } });
-
-        return cb(null, profile);
+        // console.log(profile);
+        AuthService.findProfileOrCreate({ profile: { ...profile._json, provider_username: profile.username, argo_username: profile.username }, provider: { name: profile.provider } });
+        return cb(null, { accessToken, refreshToken, profile });
     }
-  ));
+));
 
 /**
  * @description Login Required middleware.
  */
 export function isAuthenticated(req: Request, res: Response, next: NextFunction): void {
-    if (req.isAuthenticated()) {
+    console.log("i am in middleware");
+    let jwtToken: any = ""
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        jwtToken = req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+        jwtToken = req.query.token;
+    }
+    console.log(jwtToken)
+    let decoded = null;
+    try {
+        console.log('i am decoded', decoded);
+        decoded = verify(jwtToken, config.secret);
+    } catch (err) {
+        // err
+        console.log(err)
+
+
+        // this part need to be handled carefully
+
+        // ArgoSessionModel.find({
+        //     'argo_username': req.body.argo_username
+        // }).remove().exec();
+        // console.log("i am from isAuthenticated");
+    }
+    // if (req.isAuthenticated()) {
+    //     return next();
+    // }
+    if (decoded) {
         return next();
     }
-
     next(new HttpError(401, http.STATUS_CODES[401]));
 }
+
+
+
+

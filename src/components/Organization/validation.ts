@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 import Validation from '../validation';
-import { IOrganizationModel } from './model';
+import { IOrganization } from './model';
 
 /**
  * @export
@@ -18,13 +18,13 @@ class OrganizationValidation extends Validation {
     }
 
     /**
-     * @param {IOrganizationModel} params
-     * @returns {Joi.ValidationResult<IOrganizationModel >}
+     * @param {IOrganization} params
+     * @returns {Joi.ValidationResult<IOrganization >}
      * @memberof OrganizationValidation
      */
     createUser(
-        params: IOrganizationModel
-    ): Joi.ValidationResult < IOrganizationModel > {
+        params: IOrganization
+    ): Joi.ValidationResult < IOrganization > {
         const schema: Joi.Schema = Joi.object().keys({
             name: Joi.string().required(),
             email: Joi.string().email({

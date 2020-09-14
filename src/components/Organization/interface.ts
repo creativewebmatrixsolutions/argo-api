@@ -1,4 +1,4 @@
-import { IOrganizationModel } from './model';
+import { IOrganization } from './model';
 
 /**
  * @export
@@ -7,29 +7,36 @@ import { IOrganizationModel } from './model';
 export interface IOrganizationService {
 
     /**
-     * @returns {Promise<IOrganizationModel[]>}
-     * @memberof IUserService
+     * @returns {Promise<IOrganization[]>}
+     * @memberof IOrganizationService
      */
-    findAll(): Promise<IOrganizationModel[]>;
-
-    /**
-     * @param {string} code
-     * @returns {Promise<IOrganizationModel>}
-     * @memberof IUserService
-     */
-    findOne(code: string): Promise<IOrganizationModel>;
-
-    /**
-     * @param {IOrganizationModel} IOrganizationModel
-     * @returns {Promise<IOrganizationModel>}
-     * @memberof IUserService
-     */
-    insert(IOrganizationModel: IOrganizationModel): Promise<IOrganizationModel>;
+    findAll(): Promise<IOrganization[]>;
 
     /**
      * @param {string} id
-     * @returns {Promise<IOrganizationModel>}
-     * @memberof IUserService
+     * @returns {Promise<IOrganization>}
+     * @memberof IOrganizationService
      */
-    remove(id: string): Promise<IOrganizationModel>;
+    findOne(id: any): Promise<IOrganization[]>;
+
+    /**
+     * @param {IOrganization} IOrganizationModel
+     * @returns {Promise<IOrganization>}
+     * @memberof IOrganizationService
+     */
+    insert(orgDto: IOrganization): Promise<IOrganization>;
+
+    /**
+     * @param {string} id
+     * @returns {Promise<IOrganization>}
+     * @memberof IOrganizationService
+     */
+    remove(id: string): Promise<IOrganization>;
+
+    /**
+     * @param {string} id
+     * @returns {Promise<IOrganization>}
+     * @memberof IOrganizationService
+     */
+    insertDefault(id: string): Promise<IOrganization>;
 }

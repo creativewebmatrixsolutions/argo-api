@@ -31,8 +31,10 @@
     "src"
   ],
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.0",
     "bcrypt": "4.0.1",
     "body-parser": "1.19.0",
+    "class-mapper": "^0.2.3",
     "compression": "1.7.4",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "1.4.5",
@@ -42,9 +44,11 @@
     "express-session": "^1.17.1",
     "helmet": "3.22.0",
     "joi": "14.3.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "5.9.16",
     "passport": "0.4.0",
     "passport-github": "^1.1.0",
+    "passport-gitlab2": "^5.0.0",
     "ts-node": "8.10.1",
     "util": "0.12.3"
   },
@@ -60,6 +64,7 @@
     "@types/dotenv": "6.1.0",
     "@types/ejs": "2.6.1",
     "@types/express": "4.11.0",
+    "@types/express-jwt": "^0.0.42",
     "@types/express-session": "1.15.12",
     "@types/helmet": "0.0.42",
     "@types/joi": "14.0.1",
@@ -72,6 +77,7 @@
     "@types/swagger-ui-express": "3.0.0",
     "@types/yeoman-generator": "3.1.0",
     "chai": "4.2.0",
+    "express-jwt": "^6.0.0",
     "jsdoc": "3.5.5",
     "mocha": "6.2.0",
     "nodemon": "1.18.10",

@@ -6,9 +6,9 @@ import { IUserModel, IUser } from '../User/model';
  */
 export interface IAuthService {
     /**
-     * @param {IUserModel} IUserModel
+     * @param {IUser} user
      * @returns {Promise<IUserModel>}
      * @memberof AuthService
      */
-    findProfileOrCreate(IUserModel: IUser): Promise < IUserModel > ;
+    findProfileOrCreate(user: IUser): Promise<IUserModel>;
 }

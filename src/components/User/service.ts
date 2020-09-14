@@ -13,7 +13,7 @@ const UserService: IUserService = {
      * @returns {Promise < IUserModel[] >}
      * @memberof UserService
      */
-    async findAll(): Promise < IUserModel[] > {
+    async findAll(): Promise<IUserModel[]> {
         try {
             return await UserModel.find({});
         } catch (error) {
@@ -26,21 +26,32 @@ const UserService: IUserService = {
      * @returns {Promise < IUserModel >}
      * @memberof UserService
      */
-    async findOne(id: string): Promise < IUserModel > {
+    async findOne(id: string): Promise<IUserModel> {
         try {
-            const validate: Joi.ValidationResult < {
-                id: string
-            } > = UserValidation.getUser({
-                id
-            });
-
-            if (validate.error) {
-                throw new Error(validate.error.message);
-            }
-
             return await UserModel.findOne({
                 _id: Types.ObjectId(id)
             });
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+    async findOneAndUpdate(id: string, argo_username: string): Promise<any> {
+        try {
+
+            const filter = {
+                'profile.id': id
+            }
+            const update = {
+                'profile.argo_username': argo_username
+            }
+
+            await UserModel.findOneAndUpdate(filter, update)
+            return true;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -51,20 +62,10 @@ const UserService: IUserService = {
      * @returns {Promise < IUserModel >}
      * @memberof UserService
      */
-    async findOneByGithubId(id: string): Promise < IUserModel > {
+    async findOneByGithubId(id: string): Promise<IUserModel> {
         try {
-            // const validate: Joi.ValidationResult < {
-            //     id: string
-            // } > = UserValidation.getUser({
-            //     id
-            // });
-
-            // if (validate.error) {
-            //     throw new Error(validate.error.message);
-            // }
-
             return await UserModel.findOne({
-                profile: { id: Types.ObjectId(id) } 
+                profile: { id: Types.ObjectId(id) }
             });
         } catch (error) {
             throw new Error(error.message);
@@ -76,9 +77,9 @@ const UserService: IUserService = {
      * @returns {Promise < IUserModel >}
      * @memberof UserService
      */
-    async insert(body: IUserModel): Promise < IUserModel > {
+    async insert(body: IUserModel): Promise<IUserModel> {
         try {
-            const validate: Joi.ValidationResult < IUserModel > = UserValidation.createUser(body);
+            const validate: Joi.ValidationResult<IUserModel> = UserValidation.createUser(body);
 
             if (validate.error) {
                 throw new Error(validate.error.message);
@@ -97,21 +98,33 @@ const UserService: IUserService = {
      * @returns {Promise < IUserModel >}
      * @memberof UserService
      */
-    async remove(id: string): Promise < IUserModel > {
+    async remove(id: string): Promise<IUserModel> {
         try {
-            const validate: Joi.ValidationResult < {
-                id: string
-            } > = UserValidation.removeUser({
-                id
-            });
-
-            if (validate.error) {
-                throw new Error(validate.error.message);
+            const filter = {
+                'profile.id': id
             }
+            const user: IUserModel = await UserModel.findOneAndRemove(filter);
 
-            const user: IUserModel = await UserModel.findOneAndRemove({
-                _id: Types.ObjectId(id)
-            });
+            return user;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+    async updateOrganization(orgId: string, userId: string): Promise<IUserModel> {
+        try {
+            const filter = {
+                'profile.id': userId
+            }
+            const update = {
+                $addToSet: { organization: [orgId] }
+            }
+            const user: IUserModel = await UserModel.updateOne(filter, update);
 
             return user;
         } catch (error) {

@@ -69,10 +69,24 @@ export function configure(app: express.Application): void {
         res.header('Access-Control-Allow-Credentials', 'true');
         next();
     });
+
+    // app.use(jwt({
+    //     secret: config.secret,
+    //     credentialsRequired: false,
+    //     algorithms: ['HS256'],
+    //     getToken: function fromHeaderOrQuerystring(req: any) {
+    //         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    //             return req.headers.authorization.split(' ')[1];
+    //         } else if (req.query && req.query.token) {
+    //             return req.query.token;
+    //         }
+    //         return null;
+    //     }
+    // }).unless({ path: ['/auth/github', '/auth/github/callback'] }));
 }
 
 interface CustomResponse extends express.Response {
-    sendHttpError: (error: HttpError | Error, message ? : string) => void;
+    sendHttpError: (error: HttpError | Error, message?: string) => void;
 }
 
 /**
@@ -84,6 +98,7 @@ export function initErrorHandler(app: express.Application): void {
         if (typeof error === 'number') {
             error = new HttpError(error); // next(404)
         }
+        console.log(error)
 
         if (error instanceof HttpError) {
             res.sendHttpError(error);
@@ -96,7 +111,6 @@ export function initErrorHandler(app: express.Application): void {
                 res.sendHttpError(error, error.message);
             }
         }
-
         console.error(error);
     });
 }
