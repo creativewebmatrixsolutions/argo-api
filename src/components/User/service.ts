@@ -138,22 +138,23 @@ const UserService: IUserService = {
     * @returns {Promise < IUserModel >}
     * @memberof UserService
     */
-   async updateUserOrganization(orgId: string, userId: string): Promise<IUserModel> {
-    try {
-        console.log("user organization")
-        const filter = {
-            '_id': userId
-        }
-        const update = {
-            $addToSet: { organization: [orgId] }
-        }
-        const user: IUserModel = await UserModel.updateOne(filter, update);
+    async updateUserOrganization(orgId: string, userId: string): Promise<IUserModel> {
+        try {
 
-        return user;
-    } catch (error) {
-        throw new Error(error.message);
+            console.log("user organization", userId, orgId);
+            const filter = {
+                '_id': Types.ObjectId(userId)
+            }
+            const update = {
+                $addToSet: { organizations: [orgId] }
+            }
+            const user: IUserModel = await UserModel.updateOne(filter, update);
+
+            return user;
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
-}
 };
 
 export default UserService;
