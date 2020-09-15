@@ -6,6 +6,7 @@ import AuthRouter from './AuthRouter';
 import ProfileRouter from './ProfileRouter';
 import OrganizationRouter from './OrganizationRouter';
 import RepositoryRouter from './RepositoryRouter';
+import InvitationRouter from './InvitationRouter';
 
 import RepositoryService from '../components/Repository/service';
 
@@ -59,6 +60,11 @@ export function init(app: express.Application): void {
      */
     app.use('/auth', AuthRouter);
 
+     /**
+     * @description Forwards any requests to the /invite URI to our AuthRouter
+     * @constructs
+     */
+    app.use('/invite', InvitationRouter);
 
 
     /**

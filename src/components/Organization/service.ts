@@ -1,6 +1,7 @@
 import { IOrganization, OrganizationModel } from './model';
 import { IOrganizationService } from './interface';
 import { Types } from 'mongoose';
+import { IUserModel } from '../User/model';
 
 /**
  * @export
@@ -24,17 +25,11 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganization >}
      * @memberof UserService
      */
-    async findOne(id: any): Promise < IOrganization[] > {
+    async findOne(id: string): Promise < IOrganization > {
         try {
-            const array: Types.ObjectId[] = [];
-            for (let i: number = 0; i < id.length; i += 1) {
-                array[i] = Types.ObjectId(id[i]);
-            }
-            const organization: IOrganization[] = await OrganizationModel.find({
-                _id: {
-                    $in: array
-                }});
-
+            const organization: IOrganization = await OrganizationModel.findOne({
+                _id: id
+            });
             return organization;
         } catch (error) {
             throw new Error(error.message);
@@ -91,7 +86,26 @@ const OrganizationService: IOrganizationService = {
         } catch (error) {
             throw new Error(error.message);
         }
-    }
+    },
+
+    async findOneAndUpdate(Id: string, userId:string): Promise<any> {
+        try {
+            console.log("find one and update organization");
+            const filter = {
+                '_id': Id
+            }
+            const update = {
+                $addToSet: { users: [Types.ObjectId(userId)] }
+            }
+            var updatedOrganization = await  OrganizationModel.findOneAndUpdate(filter, update)
+            console.log(updatedOrganization);
+            return true;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    
 };
 
 export default OrganizationService;

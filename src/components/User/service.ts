@@ -30,7 +30,7 @@ const UserService: IUserService = {
         try {
             return await UserModel.findOne({
                 _id: Types.ObjectId(id)
-            });
+            }).populate('organizations');
         } catch (error) {
             throw new Error(error.message);
         }
@@ -118,6 +118,7 @@ const UserService: IUserService = {
     */
     async updateOrganization(orgId: string, userId: string): Promise<IUserModel> {
         try {
+            console.log("user organization")
             const filter = {
                 'profile.id': userId
             }
@@ -130,7 +131,29 @@ const UserService: IUserService = {
         } catch (error) {
             throw new Error(error.message);
         }
+    },
+
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+   async updateUserOrganization(orgId: string, userId: string): Promise<IUserModel> {
+    try {
+        console.log("user organization")
+        const filter = {
+            '_id': userId
+        }
+        const update = {
+            $addToSet: { organization: [orgId] }
+        }
+        const user: IUserModel = await UserModel.updateOne(filter, update);
+
+        return user;
+    } catch (error) {
+        throw new Error(error.message);
     }
+}
 };
 
 export default UserService;

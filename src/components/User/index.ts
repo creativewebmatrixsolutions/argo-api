@@ -44,10 +44,7 @@ export async function findOne(req: Request, res: Response, next: NextFunction): 
 
         console.log(deserializedToken.session_id);
         const user: IUserModel = await UserService.findOne(deserializedToken.session_id);
-
-        const org: IOrganization[] = await OrganizationService.findOne(user.organizations);
-
-        res.status(200).json({ user, org });
+        res.status(200).json({ user });
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }

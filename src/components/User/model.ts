@@ -98,7 +98,7 @@ export interface IUserModel extends Document {
     provider: IProviderModel;
     dateOfEntry?: Date;
     lastUpdated?: Date;
-    organizations?: [IOrganization['_id']];
+    organizations?: IOrganization[];
 }
 
 
@@ -168,10 +168,12 @@ const UserSchema: Schema = new Schema({
         type: Date,
         default: new Date()
     },
-    organizations: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Organization',
-    }
+    organizations: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Organization'
+        }
+    ]
 }, {
     collection: 'users',
     versionKey: false
