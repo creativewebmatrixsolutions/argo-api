@@ -66,7 +66,6 @@ router.delete('/logout', async (req, res) => {
     await JWTTokenService.FindAndRemove(verifiedToken.session_id);
     await req.logOut();
     req.session = null;
-    res.clearCookie('api.sid');
     res.send(200).json({ success: true });
 });
 

@@ -21,6 +21,8 @@ export interface IArgoJwtTokenService {
     DecodeToken(req: any): Promise<any>;
 
     FindAndRemove(session_id: string): Promise<any>;
+
+    FindOneBySessionId(session_id: string): Promise<IArgoSessionModel>;
 }
 
 export interface IArgoSessionDto {

@@ -6,4 +6,7 @@ const router: Router = Router();
 
 router.post('/:organizationId', RepositoryComponent.create);
 
+router.get('/github/repo', RepositoryComponent.GetUserRepos);
+
+
 export default router;
