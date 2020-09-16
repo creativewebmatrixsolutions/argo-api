@@ -32,11 +32,13 @@ export interface IDeployment extends Document {
  * @extends {Document}
  */
 export interface IOrganization extends Document {
-    name: String;
-    image: String;
+    profile: {
+        name: String,
+        image: String,
+        username: String
+    }
     repositories: [IRepository['_id']];
     users: [IUserModel['_id']];
-    username?: string;
 }
 
 const RepositorySchema: Schema = new Schema({
