@@ -27,6 +27,7 @@ export interface IProfile {
     public_gists: number;
     followers: number;
     following: number;
+    email: string;
 }
 
 /**
@@ -69,6 +70,7 @@ export interface IProfileModel extends Document {
     username: string;
     avatar_url: string;
     name: string;
+    email: string;
     url: string;
     html_url: string;
     followers_url: string;
@@ -84,7 +86,6 @@ export interface IProfileModel extends Document {
     public_gists: number;
     followers: number;
     following: number;
-    is_active: boolean;
 }
 
 /**
@@ -155,10 +156,10 @@ const ProviderSchema: Schema = new Schema({
 const UserSchema: Schema = new Schema({
     provider_profile: {
         id: { type: Number, unique: true },
-        provider_username: String,
-        argo_username: String,
+        username: String,
         avatar_url: String,
         name: String,
+        email: String,
         url: String,
         html_url: String,
         followers_url: String,
@@ -173,8 +174,7 @@ const UserSchema: Schema = new Schema({
         public_repos: Number,
         public_gists: Number,
         followers: Number,
-        following: Number,
-        is_active: { type: Boolean, default: true },
+        following: Number
     },
     argo_profile: {
         username: String,

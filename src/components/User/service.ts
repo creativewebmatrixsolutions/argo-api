@@ -47,7 +47,11 @@ const UserService: IUserService = {
                 '_id': Types.ObjectId(id)
             }
 
-            await UserModel.findOneAndUpdate(filter, user)
+            const update = {
+                'argo_profile': user
+            }
+
+            await UserModel.findOneAndUpdate(filter, update)
             return true;
         } catch (error) {
             throw new Error(error.message);
