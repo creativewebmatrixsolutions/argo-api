@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import UserModel, { IUserModel } from './model';
+import UserModel, { IArgoUser, IUserModel } from './model';
 import UserValidation from './validation';
 import { IUserService } from './interface';
 import { Types } from 'mongoose';
@@ -40,17 +40,14 @@ const UserService: IUserService = {
     * @returns {Promise < IUserModel >}
     * @memberof UserService
     */
-    async findOneAndUpdate(id: string, argo_username: string): Promise<any> {
+    async findOneAndUpdate(id: string, user: IArgoUser): Promise<any> {
         try {
 
             const filter = {
                 '_id': Types.ObjectId(id)
             }
-            const update = {
-                'profile.argo_username': argo_username
-            }
 
-            await UserModel.findOneAndUpdate(filter, update)
+            await UserModel.findOneAndUpdate(filter, user)
             return true;
         } catch (error) {
             throw new Error(error.message);
