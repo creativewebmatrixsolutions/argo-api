@@ -101,9 +101,8 @@ const OrganizationService: IOrganizationService = {
             const update = {
                 $addToSet: { users: [Types.ObjectId(userId)] }
             }
-            var updatedOrganization = await OrganizationModel.findOneAndUpdate(filter, update)
-            console.log(updatedOrganization);
-            return true;
+            const updatedOrganization = await OrganizationModel.findOneAndUpdate(filter, update);
+            return updatedOrganization;
         } catch (error) {
             throw new Error(error.message);
         }

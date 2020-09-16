@@ -59,7 +59,7 @@ export async function create(req: Request, res: Response, next: NextFunction): P
 
         const orgModel: IOrganization = await OrganizationService.findOneAndUpdate(organization.id, decodedToken.session_id);
 
-        res.status(201).json(orgModel);
+        res.status(200).json({ id: orgModel._id, success: true });
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }
