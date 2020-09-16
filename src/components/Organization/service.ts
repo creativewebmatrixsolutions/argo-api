@@ -12,7 +12,7 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganization[] >}
      * @memberof UserService
      */
-    async findAll(): Promise < IOrganization[] > {
+    async findAll(): Promise<IOrganization[]> {
         try {
             return await OrganizationModel.find({});
         } catch (error) {
@@ -25,7 +25,7 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganization >}
      * @memberof UserService
      */
-    async findOne(id: string): Promise < IOrganization > {
+    async findOne(id: string): Promise<IOrganization> {
         try {
             const organization: IOrganization = await OrganizationModel.findOne({
                 _id: id
@@ -41,16 +41,19 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel >}
      * @memberof UserService
      */
-    async insert(body: IOrganization): Promise < IOrganization > {
+    async insert(body: IOrganization): Promise<IOrganization> {
         try {
             const filter: IOrganization = await OrganizationModel.findOne({
-                name: body.name
+                'profile.name': body.name
             });
             if (filter) {
                 throw new Error('Organization already exist with this name');
             }
-            const organization: IOrganization = await OrganizationModel.create(body);
-            
+            const createObj = {
+                'profile': body
+            }
+            const organization: IOrganization = await OrganizationModel.create(createObj);
+
             return organization;
         } catch (error) {
             throw new Error(error.message);
@@ -60,7 +63,8 @@ const OrganizationService: IOrganizationService = {
     async insertDefault(id: string): Promise<IOrganization> {
         try {
             const defaultOrganization: any = {
-                name: 'default',
+                'profile.name': 'default',
+                'profile.username': 'default',
                 users: [id]
             };
             const organization: IOrganization = await OrganizationModel.create(defaultOrganization as IOrganization);
@@ -76,7 +80,7 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganization >}
      * @memberof UserService
      */
-    async remove(id: string): Promise < IOrganization > {
+    async remove(id: string): Promise<IOrganization> {
         try {
             const organization: IOrganization = await OrganizationModel.findOneAndRemove({
                 _id: Types.ObjectId(id)
@@ -88,7 +92,7 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    async findOneAndUpdate(Id: string, userId:string): Promise<any> {
+    async findOneAndUpdate(Id: string, userId: string): Promise<any> {
         try {
             console.log("find one and update organization");
             const filter = {
@@ -97,7 +101,7 @@ const OrganizationService: IOrganizationService = {
             const update = {
                 $addToSet: { users: [Types.ObjectId(userId)] }
             }
-            var updatedOrganization = await  OrganizationModel.findOneAndUpdate(filter, update)
+            var updatedOrganization = await OrganizationModel.findOneAndUpdate(filter, update)
             console.log(updatedOrganization);
             return true;
         } catch (error) {
@@ -105,7 +109,28 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    
+    async updateOrganization(org_id: string, org: any): Promise<any> {
+        try {
+            console.log("find one and update organization");
+            const filter = {
+                '_id': Types.ObjectId(org_id)
+            }
+
+            const update = {
+                'profile.name': org.name,
+                'profile.image': org.image,
+                'profile.username': org.username
+            }
+
+            var updatedOrganization = await OrganizationModel.findOneAndUpdate(filter, update)
+            console.log(updatedOrganization);
+            return true;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+
 };
 
 export default OrganizationService;

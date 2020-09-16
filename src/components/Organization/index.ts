@@ -81,3 +81,13 @@ export async function remove(req: Request, res: Response, next: NextFunction): P
         next(new HttpError(error.message.status, error.message));
     }
 }
+
+export async function update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const organization: IOrganization = await OrganizationService.updateOrganization(req.params.id, req.body);
+
+        res.status(200).json(organization);
+    } catch (error) {
+        next(new HttpError(error.message.status, error.message));
+    }
+}

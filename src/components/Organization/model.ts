@@ -1,7 +1,6 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Model } from 'mongoose';
 import { IUserModel } from '../User/model';
-// import { IRepository } from '../Repository/model';
 
 /**
  * @export
@@ -37,6 +36,7 @@ export interface IOrganization extends Document {
     image: String;
     repositories: [IRepository['_id']];
     users: [IUserModel['_id']];
+    username?: string;
 }
 
 const RepositorySchema: Schema = new Schema({
@@ -57,8 +57,11 @@ const DeploymentSchema: Schema = new Schema({
 });
 
 const OrganizationSchema: Schema = new Schema({
-    name: { type: String, default: 'default', required: true },
-    image: { type: String, required: false },
+    profile: {
+        name: { type: String, default: 'default', required: true },
+        image: { type: String, required: false },
+        username: String,
+    },
     repositories: [RepositorySchema],
     users: {
         type: [Schema.Types.ObjectId],

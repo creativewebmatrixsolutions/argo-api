@@ -42,5 +42,7 @@ export interface IOrganizationService {
     insertDefault(id: string): Promise<IOrganization>;
 
 
-    findOneAndUpdate(Id: string, userId:string): Promise<any>;
+    findOneAndUpdate(Id: string, userId: string): Promise<any>;
+
+    updateOrganization(org_id: string, org: any): Promise<any>;
 }
