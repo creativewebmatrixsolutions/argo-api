@@ -41,10 +41,10 @@ const OrganizationService: IOrganizationService = {
      * @returns {Promise < IOrganizationModel >}
      * @memberof UserService
      */
-    async insert(body: IOrganization): Promise<IOrganization> {
+    async insert(body: any): Promise<IOrganization> {
         try {
             const filter: IOrganization = await OrganizationModel.findOne({
-                'profile.name': body.profile.name
+                'profile.name': body.name
             });
             if (filter) {
                 throw new Error('Organization already exist with this name');
