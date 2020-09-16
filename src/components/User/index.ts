@@ -95,7 +95,7 @@ export async function update(req: Request, res: Response, next: NextFunction): P
     try {
         const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
         const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-        await UserService.findOneAndUpdate(deserializedToken.session_id, req.body.argo_username);
+        await UserService.findOneAndUpdate(deserializedToken.session_id, req.body.username);
         res.status(200).json({
             success: true
         });

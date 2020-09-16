@@ -44,7 +44,7 @@ const UserService: IUserService = {
         try {
 
             const filter = {
-                'profile.id': id
+                '_id': Types.ObjectId(id)
             }
             const update = {
                 'profile.argo_username': argo_username
