@@ -18,11 +18,12 @@ const AuthService: IAuthService = {
     async findProfileOrCreate(body: IUser): Promise<IUserModel> {
         try {
             const user: IUserModel = new UserModel({
-                profile: body.profile,
+                provider_profile: body.provider_profile,
                 provider: body.provider,
+                argo_profile: body.argo_profile
             });
             const query: IUserModel = await UserModel.findOne({
-                'profile.id': body.profile.id
+                'provider_profile.id': body.provider_profile.id
             });
 
             if (query) {

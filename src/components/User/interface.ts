@@ -1,4 +1,4 @@
-import { IUserModel } from './model';
+import { IArgoUser, IUserModel } from './model';
 
 /**
  * @export
@@ -40,7 +40,9 @@ export interface IUserService {
      */
     remove(id: string): Promise<IUserModel>;
 
-    findOneAndUpdate(id: string, argo_username: string): Promise<any>;
+    findOneAndUpdate(id: string, user: IArgoUser): Promise<any>;
 
     updateOrganization(orgId: string, userId: string): Promise<IUserModel>;
+
+    updateUserOrganization(orgId: string, userId: string): Promise<IUserModel>;
 }

@@ -1,14 +1,15 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Types } from 'mongoose';
 import { IOrganization } from '../Organization/model';
+import { boolean } from 'joi';
+import { type } from 'os';
 /**
  * @export
  * @interface IProfile
  */
 export interface IProfile {
     id: number;
-    argo_username: string;
-    provider_username: string;
+    username: string;
     avatar_url: string;
     name: string;
     url: string;
@@ -26,7 +27,7 @@ export interface IProfile {
     public_gists: number;
     followers: number;
     following: number;
-    is_active: boolean;
+    email: string;
 }
 
 /**
@@ -37,12 +38,21 @@ export interface IProvider {
     name: string;
 }
 
+export interface IArgoUser {
+    username: string;
+    avatar: string;
+    is_active?: boolean;
+    name: string;
+    email: string;
+}
+
 /**
  * @export
  * @interface IUser
  */
 export interface IUser {
-    profile: IProfile;
+    provider_profile: IProfile;
+    argo_profile: IArgoUser;
     provider: IProvider;
     dateOfEntry?: Date;
     lastUpdated?: Date;
@@ -57,10 +67,10 @@ export interface IUser {
  */
 export interface IProfileModel extends Document {
     id: number;
-    argo_username: string,
-    provider_username: string;
+    username: string;
     avatar_url: string;
     name: string;
+    email: string;
     url: string;
     html_url: string;
     followers_url: string;
@@ -76,7 +86,6 @@ export interface IProfileModel extends Document {
     public_gists: number;
     followers: number;
     following: number;
-    is_active: boolean;
 }
 
 /**
@@ -88,17 +97,26 @@ export interface IProviderModel extends Document {
     name: string;
 }
 
+export interface IArgoUserModel extends Document {
+    username: string;
+    avatar: string;
+    is_active?: boolean;
+    name: string;
+    email: string;
+}
+
 /**
  * @export
  * @interface IUserModel
  * @extends {Document}
  */
 export interface IUserModel extends Document {
-    profile: IProfileModel;
+    provider_profile: IProfileModel;
+    argo_profile: IArgoUser;
     provider: IProviderModel;
     dateOfEntry?: Date;
     lastUpdated?: Date;
-    organizations?: [IOrganization['_id']];
+    organizations?: IOrganization[];
 }
 
 
@@ -136,12 +154,12 @@ const ProviderSchema: Schema = new Schema({
  *        $ref: '#/components/schemas/UserSchema'
  */
 const UserSchema: Schema = new Schema({
-    profile: {
+    provider_profile: {
         id: { type: Number, unique: true },
-        provider_username: String,
-        argo_username: String,
+        username: String,
         avatar_url: String,
         name: String,
+        email: String,
         url: String,
         html_url: String,
         followers_url: String,
@@ -156,8 +174,14 @@ const UserSchema: Schema = new Schema({
         public_repos: Number,
         public_gists: Number,
         followers: Number,
-        following: Number,
-        is_active: { type: Boolean, default: true },
+        following: Number
+    },
+    argo_profile: {
+        username: String,
+        avatar: String,
+        name: String,
+        email: String,
+        is_active: { type: Boolean, default: true }
     },
     provider: ProviderSchema,
     dateOfEntry: {
@@ -168,10 +192,12 @@ const UserSchema: Schema = new Schema({
         type: Date,
         default: new Date()
     },
-    organizations: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Organization',
-    }
+    organizations: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Organization'
+        }
+    ]
 }, {
     collection: 'users',
     versionKey: false

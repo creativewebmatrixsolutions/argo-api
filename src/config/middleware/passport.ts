@@ -69,7 +69,6 @@ passport.use(new GitlabStrategy(
     (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
         // save profile here
         // console.log(profile);
-        AuthService.findProfileOrCreate({ profile: { ...profile._json, provider_username: profile.username, argo_username: profile.username }, provider: { name: profile.provider } });
         return cb(null, { accessToken, refreshToken, profile });
     }
 ));
