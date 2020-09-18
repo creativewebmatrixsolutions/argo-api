@@ -68,7 +68,7 @@ export function init(app: express.Application): void {
      * @description Forwards any requests to the /invite URI to our AuthRouter
      * @constructs
      */
-    app.use('/invite', InvitationRouter);
+    app.use('/invite', passportConfig.isAuthenticated, InvitationRouter);
 
 
     /**
