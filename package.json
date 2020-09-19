@@ -13,13 +13,6 @@
     "builder",
     "generator"
   ],
-  "description": "This generator will help you to build your own Node.js Express Mongodb API using TypeScript.",
-  "author": "Checha Valerii <chechavalera@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ChechaValerii/node-typescript-mongodb/issues"
-  },
-  "homepage": "https://github.com/ChechaValerii/node-typescript-mongodb#readme",
   "scripts": {
     "build": "tsc --skipLibCheck",
     "start": "tsc --skipLibCheck && node ./build/config/server/index.js",
@@ -31,9 +24,10 @@
     "src"
   ],
   "dependencies": {
+    "@octokit/core": "^3.1.2",
     "@types/jsonwebtoken": "^8.5.0",
     "bcrypt": "4.0.1",
-    "body-parser": "1.19.0",
+    "body-parser": "^1.19.0",
     "class-mapper": "^0.2.3",
     "compression": "1.7.4",
     "connect-mongo": "^3.2.0",
@@ -53,6 +47,7 @@
     "util": "0.12.3"
   },
   "devDependencies": {
+    "@octokit/rest": "^18.0.6",
     "@types/bcrypt": "3.0.0",
     "@types/body-parser": "1.16.8",
     "@types/chai": "4.1.7",
@@ -70,6 +65,7 @@
     "@types/joi": "14.0.1",
     "@types/mongoose": "5.3.5",
     "@types/node": "10.12.18",
+    "@types/nodemailer": "^6.4.0",
     "@types/passport": "1.0.0",
     "@types/passport-github": "^1.1.5",
     "@types/supertest": "2.0.7",
@@ -80,7 +76,9 @@
     "express-jwt": "^6.0.0",
     "jsdoc": "3.5.5",
     "mocha": "6.2.0",
+    "nodemailer": "^6.4.11",
     "nodemon": "1.18.10",
+    "socket.io": "^2.3.0",
     "source-map-loader": "0.2.4",
     "supertest": "4.0.2",
     "swagger-jsdoc": "3.2.7",

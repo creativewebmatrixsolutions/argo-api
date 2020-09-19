@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import UserModel, { IUserModel } from './model';
+import UserModel, { IArgoUser, IUserModel } from './model';
 import UserValidation from './validation';
 import { IUserService } from './interface';
 import { Types } from 'mongoose';
@@ -30,7 +30,7 @@ const UserService: IUserService = {
         try {
             return await UserModel.findOne({
                 _id: Types.ObjectId(id)
-            });
+            }).populate('organizations');
         } catch (error) {
             throw new Error(error.message);
         }
@@ -40,14 +40,15 @@ const UserService: IUserService = {
     * @returns {Promise < IUserModel >}
     * @memberof UserService
     */
-    async findOneAndUpdate(id: string, argo_username: string): Promise<any> {
+    async findOneAndUpdate(id: string, user: IArgoUser): Promise<any> {
         try {
 
             const filter = {
-                'profile.id': id
+                '_id': Types.ObjectId(id)
             }
+
             const update = {
-                'profile.argo_username': argo_username
+                'argo_profile': user
             }
 
             await UserModel.findOneAndUpdate(filter, update)
@@ -118,11 +119,35 @@ const UserService: IUserService = {
     */
     async updateOrganization(orgId: string, userId: string): Promise<IUserModel> {
         try {
+            console.log("user organization")
             const filter = {
                 'profile.id': userId
             }
             const update = {
                 $addToSet: { organization: [orgId] }
+            }
+            const user: IUserModel = await UserModel.updateOne(filter, update);
+
+            return user;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    /**
+    * @param {string} id
+    * @returns {Promise < IUserModel >}
+    * @memberof UserService
+    */
+    async updateUserOrganization(orgId: string, userId: string): Promise<IUserModel> {
+        try {
+
+            console.log("user organization", userId, orgId);
+            const filter = {
+                '_id': Types.ObjectId(userId)
+            }
+            const update = {
+                $addToSet: { organizations: [orgId] }
             }
             const user: IUserModel = await UserModel.updateOne(filter, update);
 

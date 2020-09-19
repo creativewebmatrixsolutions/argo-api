@@ -7,11 +7,11 @@ import { Types } from 'mongoose';
  * @implements {IUserModelService}
  */
 const OrganizationService: IOrganizationService = {
-    /**
-     * @returns {Promise < IOrganization[] >}
-     * @memberof UserService
-     */
-    async findAll(): Promise < IOrganization[] > {
+  /**
+   * @returns {Promise < IOrganization[] >}
+   * @memberof UserService
+   */
+    async findAll(): Promise<IOrganization[]> {
         try {
             return await OrganizationModel.find({});
         } catch (error) {
@@ -19,21 +19,14 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    /**
-     * @param {string} id
-     * @returns {Promise < IOrganization >}
-     * @memberof UserService
-     */
-    async findOne(id: any): Promise < IOrganization[] > {
+  /**
+   * @param {string} id
+   * @returns {Promise < IOrganization >}
+   * @memberof UserService
+   */
+    async findOne(id: string): Promise<IOrganization> {
         try {
-            const array: Types.ObjectId[] = [];
-            for (let i: number = 0; i < id.length; i += 1) {
-                array[i] = Types.ObjectId(id[i]);
-            }
-            const organization: IOrganization[] = await OrganizationModel.find({
-                _id: {
-                    $in: array
-                }});
+            const organization: IOrganization = await OrganizationModel.findOne({ _id: Types.ObjectId(id) }).populate('users');
 
             return organization;
         } catch (error) {
@@ -41,21 +34,24 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    /**
-     * @param {IUserModel} user
-     * @returns {Promise < IOrganizationModel >}
-     * @memberof UserService
-     */
-    async insert(body: IOrganization): Promise < IOrganization > {
+  /**
+   * @param {IUserModel} user
+   * @returns {Promise < IOrganizationModel >}
+   * @memberof UserService
+   */
+    async insert(body: any): Promise<IOrganization> {
         try {
             const filter: IOrganization = await OrganizationModel.findOne({
-                name: body.name
+                'profile.name': body.name,
             });
             if (filter) {
                 throw new Error('Organization already exist with this name');
             }
-            const organization: IOrganization = await OrganizationModel.create(body);
-            
+            const createObj: any = {
+                profile: body,
+            };
+            const organization: IOrganization = await OrganizationModel.create(createObj);
+
             return organization;
         } catch (error) {
             throw new Error(error.message);
@@ -65,10 +61,13 @@ const OrganizationService: IOrganizationService = {
     async insertDefault(id: string): Promise<IOrganization> {
         try {
             const defaultOrganization: any = {
-                name: 'default',
-                users: [id]
+                'profile.name': 'default',
+                'profile.username': 'default',
+                users: [id],
             };
-            const organization: IOrganization = await OrganizationModel.create(defaultOrganization as IOrganization);
+            const organization: IOrganization = await OrganizationModel.create(
+        defaultOrganization as IOrganization
+      );
 
             return organization;
         } catch (error) {
@@ -76,22 +75,62 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    /**
-     * @param {string} id
-     * @returns {Promise < IOrganization >}
-     * @memberof UserService
-     */
-    async remove(id: string): Promise < IOrganization > {
+  /**
+   * @param {string} id
+   * @returns {Promise < IOrganization >}
+   * @memberof UserService
+   */
+    async remove(id: string): Promise<IOrganization> {
         try {
-            const organization: IOrganization = await OrganizationModel.findOneAndRemove({
-                _id: Types.ObjectId(id)
-            });
+            const organization: IOrganization = await OrganizationModel.findOneAndRemove(
+                {
+                    _id: Types.ObjectId(id),
+                }
+      );
 
             return organization;
         } catch (error) {
             throw new Error(error.message);
         }
-    }
+    },
+
+    async findOneAndUpdate(Id: string, userId: string): Promise<any> {
+        try {
+            console.log('find one and update organization');
+            const filter: any = {
+                _id: Id,
+            };
+            const update: any = {
+                $addToSet: { users: [Types.ObjectId(userId)] },
+            };
+            const updatedOrganization: any = await OrganizationModel.findOneAndUpdate(filter, update);
+
+            return updatedOrganization;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    async updateOrganization(org_id: string, org: any): Promise<any> {
+        try {
+            console.log('find one and update organization');
+            const filter: any = {
+                _id: Types.ObjectId(org_id),
+            };
+
+            const update: any = {
+                'profile.name': org.name,
+                'profile.image': org.image,
+                'profile.username': org.username,
+            };
+
+            const updatedOrganization: any = await OrganizationModel.findOneAndUpdate(filter, update);
+            
+            return true;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
 };
 
 export default OrganizationService;

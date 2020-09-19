@@ -37,12 +37,18 @@ router.get(
     }),
     async (req, res) => {
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
-            profile: {
+            provider_profile: {
                 ...req.user.profile._json,
-                provider_username: req.user.profile.username,
-                argo_username: req.user.profile.username,
+                username: req.user.profile.username,
+                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value
             },
             provider: { name: req.user.profile.provider },
+            argo_profile: {
+                username: req.user.profile.username,
+                avatar: req.user.profile._json.avatar_url,
+                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value,
+                name: req.user.profile.displayName
+            }
         });
 
         const argoSessionDto: IArgoSessionDto = {
@@ -63,11 +69,11 @@ router.get(
 router.delete('/logout', async (req, res) => {
     const token: any = await JWTTokenService.DecodeToken(req);
     const verifiedToken: any = await JWTTokenService.VerifyToken(token);
+    
     await JWTTokenService.FindAndRemove(verifiedToken.session_id);
     await req.logOut();
     req.session = null;
-    res.clearCookie('api.sid');
-    res.send(200).json({ success: true });
+    res.status(200).json({ success: true });
 });
 
 /**
@@ -101,7 +107,31 @@ router.get(
         failureRedirect: 'http://localhost:3000/signup',
     }),
     async (req, res) => {
-        res.redirect(`http://localhost:3000/dashboard`);
+        const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
+            provider_profile: {
+                ...req.user.profile._json
+            },
+            provider: { name: req.user.profile.provider },
+            argo_profile: {
+                username: req.user.profile._json.username,
+                avatar: req.user.profile._json.avatar_url,
+                email: req.user.profile._json.email,
+                name: req.user.profile._json.name
+            }
+        });
+
+        const argoSessionDto: IArgoSessionDto = {
+            session_id: userProfileModel.id,
+            access_token: req.user.accessToken,
+            is_active: true,
+        };
+
+        const dtos: IArgoSessionDto = await JWTTokenService.findSessionOrCreate(
+            argoSessionDto
+        );
+        const token: string = await JWTTokenService.generateToken(dtos);
+
+        res.redirect(`http://localhost:3000/callback/github?token=${token}`);
     }
 );
 
