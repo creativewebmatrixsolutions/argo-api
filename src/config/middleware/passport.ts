@@ -4,7 +4,6 @@ import * as passportGithub from 'passport-github';
 import config from '../env/index';
 import HttpError from '../error';
 import { NextFunction, Request, Response } from 'express';
-import AuthService from '../../components/Auth/service';
 
 import { verify } from 'jsonwebtoken';
 
@@ -47,7 +46,7 @@ passport.use(new GithubStrategy(
         clientID: config.github.CLIENT_ID,
         clientSecret: config.github.CLIENT_SECRET,
         callbackURL: config.github.CALLBACK_URL,
-        scope: "admin:org repo user:email"
+        scope: 'admin:org repo user:email'
     },
     (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
 
@@ -77,21 +76,23 @@ passport.use(new GitlabStrategy(
  * @description Login Required middleware.
  */
 export function isAuthenticated(req: Request, res: Response, next: NextFunction): void {
-    console.log("i am in middleware");
-    let jwtToken: any = ""
+    console.log('i am in middleware');
+    let jwtToken: any = '';
+
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
         jwtToken = req.headers.authorization.split(' ')[1];
     } else if (req.query && req.query.token) {
         jwtToken = req.query.token;
     }
-    console.log(jwtToken)
-    let decoded = null;
+    console.log(jwtToken);
+    let decoded: any = null;
+
     try {
         console.log('i am decoded', decoded);
         decoded = verify(jwtToken, config.secret);
     } catch (err) {
         // err
-        console.log(err)
+        console.log(err);
 
 
         // this part need to be handled carefully
