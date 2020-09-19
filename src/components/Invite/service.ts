@@ -22,8 +22,8 @@ const InvitationService: IInvitationService = {
                 secure: false, // true for 465, false for other ports
                 service: 'gmail',
                 auth: {
-                    user: 'argoapplive@gmail.com',
-                    pass: 'Argoapplive@1234', // generated ethereal password
+                    user: 'user mail id',
+                    pass: 'user password', // generated ethereal password
                 },
             });
 
