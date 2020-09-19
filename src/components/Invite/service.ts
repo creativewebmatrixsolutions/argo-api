@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import * as nodemailer from 'nodemailer';
-import { IUser } from '../User/model';
 import { IInvitationService } from './interface';
 import { IUserInvite, UserInviteModel } from './model';
+import config from '../../config/env/index';
 
 
 /**
@@ -11,87 +11,94 @@ import { IUserInvite, UserInviteModel } from './model';
  */
 
 const InvitationService: IInvitationService = {
-
-    async sendMail(to: string): Promise<Boolean> {
-
+    async sendMail(
+    to: string,
+    inviteId: string,
+    orgName: string
+  ): Promise<Boolean> {
         let _transporter: nodemailer.Transporter;
         try {
             _transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
+                host: 'smtp.gmail.com',
                 port: 587,
                 secure: false, // true for 465, false for other ports
                 service: 'gmail',
                 auth: {
-                    user: 'user email', // generated ethereal user
-                    pass: 'use password', // generated ethereal password
+                    user: config.smtp.USERNAME,
+                    pass: config.smtp.PASSWORD, // generated ethereal password
                 },
             });
 
-            let options = {
+            const options: any = {
                 from: '"Argo Setup 👻" argotesting11@gmail.com', // sender address
-                to: to, // list of receivers
-                subject: "Hello ✔", // Subject line
-                text: "Argo testing mail", // plain text body
-                html: `Argo testing `, // html body
-            }
+                // tslint:disable-next-line: object-shorthand-properties-first
+                to, // list of receivers
+                subject: 'Hello ✔', // Subject line
+                text: 'Argo testing mail', // plain text body
+                html: `http://localhost:3000/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`, // html body
+            };
 
-            _transporter.sendMail(
-                options, (error, info) => {
-                    if (error) {
-                        return console.log(`error: ${error}`);
-                    }
-                    console.log(`Message Sent ${info.response}`);
-                });
+            _transporter.sendMail(options, (error, info) => {
+                if (error) {
+                    return console.log(`error: ${error}`);
+                }
+                console.log(`Message Sent ${info.response}`);
+            });
+
             return true;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    },
-
-    /**
-     * @param {string} id
-     * @returns {Promise <IUserInvite >}
-     * @memberof InvitationService
-     */
-    async findOne(id: string): Promise<IUserInvite> {
-        try {
-            return await UserInviteModel.findOne({
-                _id: Types.ObjectId(id)
-            }).populate('organizations', '_id');
         } catch (error) {
             throw new Error(error.message);
         }
     },
 
-    /**
-    * @param {IUserInvite} userInvite
-    * @returns {Promise <IUserInvite>}
-    * @memberof InvitationService
-    */
+  /**
+   * @param {string} id
+   * @returns {Promise <IUserInvite >}
+   * @memberof InvitationService
+   */
+    async findOne(id: string): Promise<IUserInvite> {
+        try {
+            return await UserInviteModel.findOne({
+        _id: Types.ObjectId(id),
+      }).populate('organizations', '_id');
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+  /**
+   * @param {IUserInvite} userInvite
+   * @returns {Promise <IUserInvite>}
+   * @memberof InvitationService
+   */
     async insert(body: IUserInvite): Promise<IUserInvite> {
         try {
             const user: IUserInvite = await UserInviteModel.create(body);
+
             return user;
         } catch (error) {
             throw new Error(error.message);
         }
     },
 
-    /**
-    * @param {string} id
-    * @returns {Promise <any>}
-    * @memberof UserService
-    */
-    async findOneAndUpdate(inviteId: string, status: string): Promise<IUserInvite> {
+  /**
+   * @param {string} id
+   * @returns {Promise <any>}
+   * @memberof UserService
+   */
+    async findOneAndUpdate(
+    inviteId: string,
+    status: string
+  ): Promise<IUserInvite> {
         try {
-            const filter = {
-                '_id': inviteId
-            }
-            const update = {
-                'status': status
-            }
-            var updatedUser = await UserInviteModel.findOneAndUpdate(filter, update)
+            const filter: any = {
+                _id: inviteId,
+            };
+            const update: any = {
+                status,
+            };
+            const updatedUser: any = await UserInviteModel.findOneAndUpdate(filter, update);
+
             return updatedUser;
         } catch (error) {
             throw new Error(error.message);

@@ -33,10 +33,10 @@ export interface IDeployment extends Document {
  */
 export interface IOrganization extends Document {
     profile: {
-        name: String,
-        image: String,
-        username: String
-    }
+        name: String;
+        image: String;
+        username: String;
+    };
     repositories: [IRepository['_id']];
     users: [IUserModel['_id']];
 }
@@ -48,31 +48,36 @@ const RepositorySchema: Schema = new Schema({
     deployments: {
         type: [Schema.Types.ObjectId],
         ref: 'Deployment',
-    }
+    },
 });
 
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
     log: [String],
-    createdAt: { type: Date, default: new Date() }
+    createdAt: { type: Date, default: new Date() },
 });
 
-const OrganizationSchema: Schema = new Schema({
-    profile: {
-        name: { type: String, default: 'default', required: true },
-        image: { type: String, required: false },
-        username: String,
+const OrganizationSchema: Schema = new Schema(
+    {
+        profile: {
+            name: { type: String, default: 'default', required: true },
+            image: { type: String, required: false },
+            username: String,
+        },
+        repositories: [RepositorySchema],
+        users: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'UserModel',
+            },
+        ],
     },
-    repositories: [RepositorySchema],
-    users: {
-        type: [Schema.Types.ObjectId],
-        ref: 'UserModel',
+    {
+        collection: 'organizationsdb',
+        versionKey: false,
     }
-}, {
-    collection: 'organizationsdb',
-    versionKey: false
-});
+);
 
 export const DeploymentModel: Model<IDeployment> = connections.db.model<IDeployment>('Deployment', DeploymentSchema);
 export const OrganizationModel: Model<IOrganization> = connections.db.model<IOrganization>('Organization', OrganizationSchema);

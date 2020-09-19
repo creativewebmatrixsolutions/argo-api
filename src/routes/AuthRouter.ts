@@ -39,13 +39,14 @@ router.get(
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
             provider_profile: {
                 ...req.user.profile._json,
-                username: req.user.profile.username
+                username: req.user.profile.username,
+                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value
             },
             provider: { name: req.user.profile.provider },
             argo_profile: {
                 username: req.user.profile.username,
                 avatar: req.user.profile._json.avatar_url,
-                email: req.user.profile._json.email,
+                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value,
                 name: req.user.profile.displayName
             }
         });
@@ -68,6 +69,7 @@ router.get(
 router.delete('/logout', async (req, res) => {
     const token: any = await JWTTokenService.DecodeToken(req);
     const verifiedToken: any = await JWTTokenService.VerifyToken(token);
+    
     await JWTTokenService.FindAndRemove(verifiedToken.session_id);
     await req.logOut();
     req.session = null;
@@ -111,10 +113,10 @@ router.get(
             },
             provider: { name: req.user.profile.provider },
             argo_profile: {
-                username: req.user.profile.username,
-                avatar: req.user.profile.avatar_url,
-                email: req.user.profile.email,
-                name: req.user.profile.name
+                username: req.user.profile._json.username,
+                avatar: req.user.profile._json.avatar_url,
+                email: req.user.profile._json.email,
+                name: req.user.profile._json.name
             }
         });
 
