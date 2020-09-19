@@ -19,6 +19,10 @@ interface IConfig {
         CLIENT_SECRET: string;
         CALLBACK_URL: string;
     };
+    smtp?: { 
+        USERNAME: string;
+        PASSWORD: string;
+    };
     secret: string;
 }
 
@@ -40,6 +44,10 @@ const development: IConfig = {
         CLIENT_ID: process.env.GITLAB_CLIENT_ID || 'xyz',
         CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET || 'uvx',
         CALLBACK_URL: process.env.GITLAB_CALLBACK_URL || 'wq',
+    },
+    smtp: { 
+        USERNAME: process.env.SMTP_USERNAME || 'abcd',
+        PASSWORD: process.env.SMTP_PASSWORD || 'abcd',
     },
     secret: process.env.SECRET || '@QEGTUIARGOTEST'
 };

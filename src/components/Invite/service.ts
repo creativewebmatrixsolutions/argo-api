@@ -2,6 +2,8 @@ import { Types } from 'mongoose';
 import * as nodemailer from 'nodemailer';
 import { IInvitationService } from './interface';
 import { IUserInvite, UserInviteModel } from './model';
+import config from '../../config/env/index';
+
 
 /**
  * @export
@@ -22,8 +24,8 @@ const InvitationService: IInvitationService = {
                 secure: false, // true for 465, false for other ports
                 service: 'gmail',
                 auth: {
-                    user: 'user mail id',
-                    pass: 'user password', // generated ethereal password
+                    user: config.smtp.USERNAME,
+                    pass: config.smtp.PASSWORD, // generated ethereal password
                 },
             });
 
