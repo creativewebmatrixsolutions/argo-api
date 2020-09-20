@@ -22,8 +22,8 @@ export interface IRepository extends Document {
 export interface IDeployment extends Document {
     sitePreview: String;
     commitId: String;
-    log: String;
-    createdAt: Date;
+    log: [String];
+    createdAt: any;
 }
 
 /**
@@ -55,7 +55,7 @@ const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
     log: [String],
-    createdAt: { type: Date, default: new Date() },
+    createdAt: { type: String, default: new Date() },
 });
 
 const OrganizationSchema: Schema = new Schema(
@@ -65,7 +65,10 @@ const OrganizationSchema: Schema = new Schema(
             image: { type: String, required: false },
             username: String,
         },
-        repositories: [RepositorySchema],
+        repositories: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Repository'
+        }],
         users: [
             {
                 type: Schema.Types.ObjectId,
@@ -80,4 +83,7 @@ const OrganizationSchema: Schema = new Schema(
 );
 
 export const DeploymentModel: Model<IDeployment> = connections.db.model<IDeployment>('Deployment', DeploymentSchema);
+
+export const RepositoryModel: Model<IRepository> = connections.db.model<IRepository>('Repository', RepositorySchema);
+
 export const OrganizationModel: Model<IOrganization> = connections.db.model<IOrganization>('Organization', OrganizationSchema);
