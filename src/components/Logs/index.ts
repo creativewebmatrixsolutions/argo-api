@@ -50,8 +50,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             };
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch(err => console.log(err));
         });
-
-        axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err));
+        setTimeout(() => axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err)), 2000);
 
         res.status(200).json({
             success: true,
