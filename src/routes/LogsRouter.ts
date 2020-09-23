@@ -5,7 +5,7 @@ const router: Router = Router();
 
 router.post('/', LogsComponent.Deploy);
 
-router.post('/:id', LogsComponent.FindDeploymentById);
+router.get('/:id', LogsComponent.FindDeploymentById);
 
 
 export default router;
