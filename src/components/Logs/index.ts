@@ -11,6 +11,9 @@ import DeploymentService from './service';
 
 const io = require('socket.io-client');
 
+const Server = require('socket.io');
+const emitter = new Server();
+
 const socket = io(config.default.flaskApi.BASE_ADDRESS);
 
 /**
@@ -24,16 +27,22 @@ export async function test(req: Request, res: Response, next: NextFunction): Pro
     try {
 
         const uniqueTopicName = uuidv4();
+        const splitUrl = req.body.github_url.split("/");
+        const folderName = splitUrl[splitUrl.length - 1].split(".")[0];
+        const fullGitHubPath: string = `${req.body.github_url} --branch ${req.body.branch}`;
         const body: IInternalApiDto = {
-            github_url: req.body.github_url,
-            folder_name: req.body.folder_name,
-            topic: uniqueTopicName
+            github_url: fullGitHubPath,
+            folder_name: folderName,
+            topic: uniqueTopicName,
+            package_manager: req.body.package_manager,
+            branch: req.body.branch
         };
-        axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err));
-
         const deploymentId: Types.ObjectId = await DeploymentService.createAndDeployRepo(req.body)
+
+        console.log(uniqueTopicName);
         socket.on(uniqueTopicName, async (data: any) => {
             console.log(data);
+            emitter.emit(uniqueTopicName, data);
             const depFilter = {
                 '_id': deploymentId
             };
@@ -42,6 +51,8 @@ export async function test(req: Request, res: Response, next: NextFunction): Pro
             };
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch(err => console.log(err));
         });
+
+        axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err));
 
         res.status(200).json({
             success: true,

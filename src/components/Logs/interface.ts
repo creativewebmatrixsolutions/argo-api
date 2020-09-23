@@ -10,6 +10,8 @@ export interface IInternalApiDto {
     github_url: string;
     folder_name: string;
     topic: string;
+    package_manager: string;
+    branch: string
 }
 
 export interface IDeploymentDto {
