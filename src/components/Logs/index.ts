@@ -37,14 +37,13 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             package_manager: req.body.package_manager,
             branch: req.body.branch
         };
-        const deploymentId: Types.ObjectId = await DeploymentService.createAndDeployRepo(req.body)
+        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body)
 
         console.log(uniqueTopicName);
         socket.on(uniqueTopicName, async (data: any) => {
-            console.log(data);
             emitter.emit(uniqueTopicName, data);
             const depFilter = {
-                '_id': deploymentId
+                '_id': deploymentObj.deploymentId
             };
             const updateDeployment = {
                 $addToSet: { log: [data] },
@@ -56,7 +55,9 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
 
         res.status(200).json({
             success: true,
-            topic: uniqueTopicName
+            topic: uniqueTopicName,
+            deploymentId: deploymentObj.deploymentId,
+            repositoryId: deploymentObj.repositoryId
         });
 
     } catch (error) {

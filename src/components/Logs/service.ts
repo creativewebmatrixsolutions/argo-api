@@ -5,7 +5,7 @@ import { IDeploymentService } from "./interface";
 
 const DeploymentService: IDeploymentService = {
 
-    async createAndDeployRepo(body: any): Promise<Types.ObjectId> {
+    async createAndDeployRepo(body: any): Promise<any> {
         // create deployment and
         const deployment = {
             sitePreview: '',
@@ -16,13 +16,16 @@ const DeploymentService: IDeploymentService = {
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);
         // fetch repo with url name
-        await findOneAndCreateRepo(body, deploymentModel._id);
-        return deploymentModel._id;
+        const repositoryId: any = await findOneAndCreateRepo(body, deploymentModel._id);
+        return {
+            deploymentId: deploymentModel._id,
+            repositoryId: repositoryId._id
+        }
     }
 }
 
 
-const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Promise<Types.ObjectId> => {
+const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Promise<any> => {
     const filter = {
         'url': body.github_url
     }
