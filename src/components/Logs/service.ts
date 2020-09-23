@@ -1,17 +1,18 @@
 import { Types } from "mongoose";
 import { DeploymentModel, IDeployment, IOrganization, IRepository, OrganizationModel, RepositoryModel } from "../Organization/model";
-import { IDeploymentService } from "./interface";
+import { IDeploymentDto, IDeploymentService } from "./interface";
 
 
 const DeploymentService: IDeploymentService = {
 
-    async createAndDeployRepo(body: any): Promise<any> {
+    async createAndDeployRepo(body: any, topic: string): Promise<any> {
         // create deployment and
-        const deployment = {
+        const deployment: IDeploymentDto = {
             sitePreview: '',
             commitId: '00192',
             log: ['Build started'],
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            topic: topic
         };
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);
@@ -21,6 +22,15 @@ const DeploymentService: IDeploymentService = {
             deploymentId: deploymentModel._id,
             repositoryId: repositoryId._id
         }
+    },
+    async FindOneDeployment(deploymentId: string): Promise<IDeployment> {
+        // create deployment and
+
+        const filter = {
+            '_id': Types.ObjectId(deploymentId)
+        }
+        const deployment: IDeployment = await DeploymentModel.findById(filter);
+        return deployment;
     }
 }
 

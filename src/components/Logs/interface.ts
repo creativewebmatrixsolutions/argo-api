@@ -1,9 +1,11 @@
 import { Types } from "mongoose";
+import { IDeployment } from "../Organization/model";
 
 
 export interface IDeploymentService {
 
-    createAndDeployRepo(body: any): Promise<Types.ObjectId>;
+    createAndDeployRepo(body: any, topic: string): Promise<Types.ObjectId>;
+    FindOneDeployment(deploymentId: string): Promise<IDeployment>;
 }
 
 export interface IInternalApiDto {
@@ -18,5 +20,6 @@ export interface IDeploymentDto {
     sitePreview: string;
     commitId: string;
     log: [string];
-    createdAt: Date;
+    createdAt: any;
+    topic: string;
 }

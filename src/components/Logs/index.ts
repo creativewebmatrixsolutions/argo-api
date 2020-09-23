@@ -3,7 +3,7 @@ import HttpError from "../../config/error";
 import * as config from "../../config/env/index"
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios'
-import { DeploymentModel } from '../Organization/model';
+import { DeploymentModel, IDeployment } from '../Organization/model';
 import { Types } from 'mongoose';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
@@ -37,7 +37,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             package_manager: req.body.package_manager,
             branch: req.body.branch
         };
-        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body)
+        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName)
 
         console.log(uniqueTopicName);
         socket.on(uniqueTopicName, async (data: any) => {
@@ -63,4 +63,12 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }
+}
+
+export async function FindDeploymentById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const deployment: IDeployment = await DeploymentService.FindOneDeployment(req.params.id);
+    res.status(200).json({
+        success: true,
+        deployment: deployment
+    });
 }

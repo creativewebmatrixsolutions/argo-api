@@ -24,6 +24,7 @@ export interface IDeployment extends Document {
     commitId: String;
     log: [String];
     createdAt: any;
+    topic: string;
 }
 
 /**
@@ -55,6 +56,7 @@ const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
     log: [String],
+    topic: String,
     createdAt: { type: String, default: new Date() },
 });
 
