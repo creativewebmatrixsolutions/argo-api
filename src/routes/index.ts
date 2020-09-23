@@ -7,6 +7,7 @@ import ProfileRouter from './ProfileRouter';
 import OrganizationRouter from './OrganizationRouter';
 import RepositoryRouter from './RepositoryRouter';
 import InvitationRouter from './InvitationRouter';
+import WebHookRouter from './WebHookRouter';
 
 import LogsRouter from './LogsRouter';
 
@@ -55,6 +56,14 @@ export function init(app: express.Application): void {
     * @constructs
     */
     app.use('/repository', passportConfig.isAuthenticated, RepositoryRouter);
+
+    /**
+    * @description
+    *  Forwards any requests to the /webhook URI
+    *  Also, check if user authenticated
+    * @constructs
+    */
+    app.use('/webhook', passportConfig.isAuthenticated, WebHookRouter);
 
     // app.use('/logs', LogsRouter);
 

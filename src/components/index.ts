@@ -4,6 +4,7 @@ import * as OrganizationComponent from './Organization';
 import * as RepositoryComponent from './Repository';
 import * as InvitationComponent from './Invite';
 import * as LogsComponent from './Logs';
+import * as WebHookComponent from './WebHook';
 
 export {
     AuthComponent,
@@ -11,5 +12,6 @@ export {
     OrganizationComponent,
     RepositoryComponent,
     InvitationComponent,
-    LogsComponent
+    LogsComponent,
+    WebHookComponent
 };
