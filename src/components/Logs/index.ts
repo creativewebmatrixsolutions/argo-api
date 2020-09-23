@@ -23,7 +23,7 @@ const socket = io(config.default.flaskApi.BASE_ADDRESS);
  * @param {NextFunction} next
  * @returns {Promise <void>}
  */
-export async function test(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
 
         const uniqueTopicName = uuidv4();
