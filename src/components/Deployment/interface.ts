@@ -22,4 +22,5 @@ export interface IDeploymentDto {
     log: [string];
     createdAt: any;
     topic: string;
+    branch: string
 }

@@ -12,12 +12,12 @@ export interface IRepositoryService {
     //  */
     // findAll(orgId: string): Promise<IRepository[]>;
 
-    // /**
-    //  * @param {string} id
-    //  * @returns {Promise<IRepository>}
-    //  * @memberof IRepositoryService
-    //  */
-    // findOne(id: string): Promise<IRepository>;
+    /**
+     * @param {string} id
+     * @returns {Promise<IRepository>}
+     * @memberof IRepositoryService
+     */
+    findOne(id: string): Promise<IRepository>;
 
     /**
      * @param {IOrganization} IOrganizationModel

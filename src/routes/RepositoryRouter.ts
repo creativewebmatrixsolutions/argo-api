@@ -4,9 +4,12 @@ import { RepositoryComponent } from '../components';
 
 const router: Router = Router();
 
-router.post('/:organizationId', RepositoryComponent.create);
+router.post('/', RepositoryComponent.create);
 
 router.get('/github/repo', RepositoryComponent.GetUserRepos);
+
+router.get('/:id', RepositoryComponent.findOne);
+
 
 
 export default router;

@@ -1,4 +1,5 @@
-import { IRepository, IOrganization, OrganizationModel } from '../Organization/model';
+import { Types } from 'mongoose';
+import { IRepository, IOrganization, OrganizationModel, RepositoryModel } from '../Organization/model';
 import { IRepositoryService } from './interface';
 
 
@@ -21,29 +22,28 @@ const RepositoryService: IRepositoryService = {
     //     }
     // },
 
-    // /**
-    //  * @param {string} id
-    //  * @returns {Promise < IRepository >}
-    //  * @memberof UserService
-    //  */
-    // async findOne(id: string): Promise < IRepository > {
-    //     try {
-    //         const organization: IRepository = await RepositoryModel.findOne({
-    //             _id: id
-    //         });
-
-    //         return organization;
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // },
+    /**
+     * @param {string} id
+     * @returns {Promise < IRepository >}
+     * @memberof UserService
+     */
+    async findOne(id: string): Promise<IRepository> {
+        try {
+            const repository: IRepository = await RepositoryModel.findOne({
+                _id: Types.ObjectId(id)
+            }).populate('deployments', 'branch createdAt sitePreview');
+            return repository;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
 
     /**
      * @param {IUserModel} user
      * @returns {Promise < IRepository >}
      * @memberof UserService
      */
-    async insert(repository: IRepository, organizationId: string): Promise < IRepository > {
+    async insert(repository: IRepository, organizationId: string): Promise<IRepository> {
         try {
             const organization: IOrganization = await OrganizationModel.findOne({
                 _id: organizationId

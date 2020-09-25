@@ -12,6 +12,8 @@ export interface IRepository extends Document {
     url: String;
     webHook: String;
     deployments: [IDeployment['_id']];
+    updateDate: Date;
+    createDate: Date;
 }
 
 /**
@@ -25,6 +27,7 @@ export interface IDeployment extends Document {
     log: [String];
     createdAt: any;
     topic: string;
+    branch: string
 }
 
 /**
@@ -46,10 +49,16 @@ const RepositorySchema: Schema = new Schema({
     name: String,
     url: String,
     webHook: String,
-    deployments: {
+    deployments: [{
         type: [Schema.Types.ObjectId],
         ref: 'Deployment',
+    }],
+    createDate: {
+        type: Date, default: new Date()
     },
+    updateDate: {
+        type: Date, default: new Date()
+    }
 });
 
 const DeploymentSchema: Schema = new Schema({
@@ -58,6 +67,7 @@ const DeploymentSchema: Schema = new Schema({
     log: [String],
     topic: String,
     createdAt: { type: String, default: new Date() },
+    branch: String,
 });
 
 const OrganizationSchema: Schema = new Schema(

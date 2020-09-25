@@ -45,9 +45,21 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             const depFilter = {
                 '_id': deploymentObj.deploymentId
             };
-            const updateDeployment = {
-                $addToSet: { log: [data] },
-            };
+            let isLink = data.indexOf("https://arweave.net/") != -1;
+            let updateDeployment: any;
+            if (isLink) {
+                const arweaveLink = data.trim();
+                updateDeployment = {
+                    $addToSet: { log: [data] },
+                    sitePreview: arweaveLink
+                };
+            }
+            else {
+                updateDeployment = {
+                    $addToSet: { log: [data] },
+                };
+            }
+
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch(err => console.log(err));
         });
         setTimeout(() => axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err)), 2000);

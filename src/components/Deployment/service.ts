@@ -11,8 +11,9 @@ const DeploymentService: IDeploymentService = {
             sitePreview: '',
             commitId: '00192',
             log: ['Build started'],
-            createdAt: Date.now(),
-            topic: topic
+            createdAt: new Date(),
+            topic: topic,
+            branch: body.branch,
         };
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);
@@ -52,7 +53,8 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         const updateDeploymentId = {
             $addToSet: {
                 deployments: [deploymentId]
-            }
+            },
+            updateDate: new Date()
         }
         await RepositoryModel.findOneAndUpdate(filter, updateDeploymentId);
         return findOneRepo._id;
