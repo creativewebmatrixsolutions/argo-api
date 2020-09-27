@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import HttpError from "../../config/error";
 import * as config from "../../config/env/index"
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios'
+import axios from 'axios';
 import { DeploymentModel, IDeployment } from '../Organization/model';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
@@ -24,7 +24,6 @@ const socket = io(config.default.flaskApi.BASE_ADDRESS);
  */
 export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
         const uniqueTopicName = uuidv4();
         const splitUrl = req.body.github_url.split("/");
         const folderName = splitUrl[splitUrl.length - 1].split(".")[0];

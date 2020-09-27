@@ -30,7 +30,7 @@ const WebHookService: IWebHookService = {
                     repo: webHookCreationDto.repo, // 'argo-api'
                     events: webHookCreationDto.events, // ['push']
                     config: {
-                        url: webHookCreationDto.configUrl, // URL from NGROK 'http://bbd64cf988c3.ngrok.io'
+                        url: 'http://bbd64cf988c3.ngrok.io/webhook/notifyOnPush', // URL from NGROK 'http://bbd64cf988c3.ngrok.io'
                         content_type: 'json',
                         insecure_ssl: '1',
                     },
