@@ -1,3 +1,4 @@
+import { string } from 'joi';
 import { Types } from 'mongoose';
 import { IRepository, IOrganization, OrganizationModel, RepositoryModel } from '../Organization/model';
 import { IRepositoryService } from './interface';
@@ -8,19 +9,6 @@ import { IRepositoryService } from './interface';
  * @implements {IRepositoryService}
  */
 const RepositoryService: IRepositoryService = {
-    // /**
-    //  * @returns {Promise < IRepository[] >}
-    //  * @memberof UserService
-    //  */
-    // async findAll(orgId: string): Promise < IRepository[] > {
-    //     try {
-    //         return await RepositoryModel.findOne({
-    //             _id = orgId
-    //         });
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // },
 
     /**
      * @param {string} id
@@ -62,38 +50,34 @@ const RepositoryService: IRepositoryService = {
         } catch (error) {
             throw new Error(error.message);
         }
-    }
+    },
 
-    // async insertDefault(id: string): Promise<IRepository> {
-    //     try {
-    //         const defaultOrganization: any = {
-    //             name: 'default',
-    //             users: [id]
-    //         };
-    //         const organization: IRepository = await RepositoryModel.create(defaultOrganization as IRepository);
+    /**
+ * @param {string} id
+ * @returns {Promise < IRepository >}
+ * @memberof UserService
+ */
+    async findOneAndUpdate(id: string, body: any): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(id)
+            };
+            const update = {
+                $set: {
+                    'package_manager': body.package_manager,
+                    'build_command': body.build_command,
+                    'publish_dir': body.publish_dir,
+                    'branch': body.branch
+                }
+            }
+            console.log(id);
+            const repository: IRepository = await RepositoryModel.findOneAndUpdate(filter, update);
+            return true;
 
-    //         return organization;
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // },
-
-    // /**
-    //  * @param {string} id
-    //  * @returns {Promise < IOrganization >}
-    //  * @memberof UserService
-    //  */
-    // async remove(id: string): Promise < IRepository > {
-    //     try {
-    //         const organization: IRepository = await RepositoryModel.findOneAndRemove({
-    //             _id: Types.ObjectId(id)
-    //         });
-
-    //         return organization;
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // }
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
 };
 
 export default RepositoryService;
