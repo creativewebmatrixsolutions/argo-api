@@ -18,7 +18,7 @@ const DeploymentService: IDeploymentService = {
             package_manager: body.package_manager,
             build_command: body.build_command,
             publish_dir: body.publish_dir,
-
+            deploymentStatus: "Pending"
         };
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);

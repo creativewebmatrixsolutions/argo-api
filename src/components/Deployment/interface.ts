@@ -28,4 +28,5 @@ export interface IDeploymentDto {
     build_command: string;
     publish_dir: string;
     package_manager: string;
+    deploymentStatus: string;
 }

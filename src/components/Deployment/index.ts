@@ -53,7 +53,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                 updateDeployment = {
                     $addToSet: { log: [data] },
                     sitePreview: arweaveLink,
-                    deploymentStatus: "Completed"
+                    deploymentStatus: "Deployed"
                 };
             }
             else {
