@@ -1,5 +1,5 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema, Model } from 'mongoose';
+import { Document, Schema, Model, Types } from 'mongoose';
 import { IUserModel } from '../User/model';
 
 /**
@@ -14,6 +14,7 @@ export interface IRepository extends Document {
     deployments: [IDeployment['_id']];
     updateDate: Date;
     createDate: Date;
+    orgId: Types.ObjectId;
 }
 
 /**
@@ -29,6 +30,9 @@ export interface IDeployment extends Document {
     topic: string;
     branch: string
     deploymentStatus: string;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
 }
 
 /**
@@ -59,7 +63,8 @@ const RepositorySchema: Schema = new Schema({
     },
     updateDate: {
         type: Date, default: new Date()
-    }
+    },
+    orgId: Types.ObjectId
 });
 
 const DeploymentSchema: Schema = new Schema({
@@ -69,7 +74,10 @@ const DeploymentSchema: Schema = new Schema({
     topic: String,
     createdAt: { type: String, default: new Date() },
     branch: String,
-    deploymentStatus: String
+    deploymentStatus: String,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
 });
 
 const OrganizationSchema: Schema = new Schema(

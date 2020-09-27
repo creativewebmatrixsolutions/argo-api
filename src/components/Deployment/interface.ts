@@ -13,7 +13,9 @@ export interface IInternalApiDto {
     folder_name: string;
     topic: string;
     package_manager: string;
-    branch: string
+    branch: string;
+    build_command: string;
+    publish_dir: string;
 }
 
 export interface IDeploymentDto {
@@ -23,4 +25,7 @@ export interface IDeploymentDto {
     createdAt: any;
     topic: string;
     branch: string
+    build_command: string;
+    publish_dir: string;
+    package_manager: string;
 }

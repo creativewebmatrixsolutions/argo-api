@@ -1,3 +1,4 @@
+import { string } from "joi";
 import { Types } from "mongoose";
 import { DeploymentModel, IDeployment, IOrganization, IRepository, OrganizationModel, RepositoryModel } from "../Organization/model";
 import { IDeploymentDto, IDeploymentService } from "./interface";
@@ -14,6 +15,10 @@ const DeploymentService: IDeploymentService = {
             createdAt: new Date(),
             topic: topic,
             branch: body.branch,
+            package_manager: body.package_manager,
+            build_command: body.build_command,
+            publish_dir: body.publish_dir,
+
         };
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);
@@ -38,7 +43,8 @@ const DeploymentService: IDeploymentService = {
 
 const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Promise<any> => {
     const filter = {
-        'url': body.github_url
+        'url': body.github_url,
+        'orgId': Types.ObjectId(body.orgId)
     }
 
     console.log('giturl: ', body.github_url);
@@ -64,7 +70,8 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         name: body.folder_name,
         url: body.github_url,
         'webHook': "xyz",
-        deployments: [deploymentId]
+        deployments: [deploymentId],
+        orgId: Types.ObjectId(body.orgId)
     };
     const repository: IRepository = await RepositoryModel.create(update);
     const orgFilter = {

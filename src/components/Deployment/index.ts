@@ -4,7 +4,6 @@ import * as config from "../../config/env/index"
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios'
 import { DeploymentModel, IDeployment } from '../Organization/model';
-import { Types } from 'mongoose';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
 
@@ -35,7 +34,9 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             folder_name: folderName,
             topic: uniqueTopicName,
             package_manager: req.body.package_manager,
-            branch: req.body.branch
+            branch: req.body.branch,
+            build_command: req.body.build_command,
+            publish_dir: req.body.publish_directory
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName)
 

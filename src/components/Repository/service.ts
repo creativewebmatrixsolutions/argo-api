@@ -31,7 +31,7 @@ const RepositoryService: IRepositoryService = {
         try {
             const repository: IRepository = await RepositoryModel.findOne({
                 _id: Types.ObjectId(id)
-            }).populate('deployments', 'branch createdAt sitePreview');
+            }).populate('deployments', 'branch topic createdAt sitePreview deploymentStatus package_manager build_command publish_dir');
             return repository;
         } catch (error) {
             throw new Error(error.message);
