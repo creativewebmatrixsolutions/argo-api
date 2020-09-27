@@ -29,4 +29,5 @@ export interface IDeploymentDto {
     publish_dir: string;
     package_manager: string;
     deploymentStatus: string;
+    github_url: string;
 }
