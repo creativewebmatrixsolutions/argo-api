@@ -7,10 +7,10 @@ import { Types } from 'mongoose';
  * @implements {IUserModelService}
  */
 const OrganizationService: IOrganizationService = {
-  /**
-   * @returns {Promise < IOrganization[] >}
-   * @memberof UserService
-   */
+    /**
+     * @returns {Promise < IOrganization[] >}
+     * @memberof UserService
+     */
     async findAll(): Promise<IOrganization[]> {
         try {
             return await OrganizationModel.find({});
@@ -19,14 +19,14 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-  /**
-   * @param {string} id
-   * @returns {Promise < IOrganization >}
-   * @memberof UserService
-   */
+    /**
+     * @param {string} id
+     * @returns {Promise < IOrganization >}
+     * @memberof UserService
+     */
     async findOne(id: string): Promise<IOrganization> {
         try {
-            const organization: IOrganization = await OrganizationModel.findOne({ _id: Types.ObjectId(id) }).populate('users');
+            const organization: IOrganization = await OrganizationModel.findOne({ _id: Types.ObjectId(id) }).populate('users').populate('repositories');
 
             return organization;
         } catch (error) {
@@ -34,11 +34,11 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-  /**
-   * @param {IUserModel} user
-   * @returns {Promise < IOrganizationModel >}
-   * @memberof UserService
-   */
+    /**
+     * @param {IUserModel} user
+     * @returns {Promise < IOrganizationModel >}
+     * @memberof UserService
+     */
     async insert(body: any): Promise<IOrganization> {
         try {
             const filter: IOrganization = await OrganizationModel.findOne({
@@ -66,8 +66,8 @@ const OrganizationService: IOrganizationService = {
                 users: [id],
             };
             const organization: IOrganization = await OrganizationModel.create(
-        defaultOrganization as IOrganization
-      );
+                defaultOrganization as IOrganization
+            );
 
             return organization;
         } catch (error) {
@@ -75,18 +75,18 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-  /**
-   * @param {string} id
-   * @returns {Promise < IOrganization >}
-   * @memberof UserService
-   */
+    /**
+     * @param {string} id
+     * @returns {Promise < IOrganization >}
+     * @memberof UserService
+     */
     async remove(id: string): Promise<IOrganization> {
         try {
             const organization: IOrganization = await OrganizationModel.findOneAndRemove(
                 {
                     _id: Types.ObjectId(id),
                 }
-      );
+            );
 
             return organization;
         } catch (error) {
@@ -125,7 +125,7 @@ const OrganizationService: IOrganizationService = {
             };
 
             const updatedOrganization: any = await OrganizationModel.findOneAndUpdate(filter, update);
-            
+
             return true;
         } catch (error) {
             throw new Error(error.message);

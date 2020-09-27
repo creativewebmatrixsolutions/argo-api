@@ -1,30 +1,50 @@
+import { string } from "joi";
 import { Types } from "mongoose";
 import { DeploymentModel, IDeployment, IOrganization, IRepository, OrganizationModel, RepositoryModel } from "../Organization/model";
-import { IDeploymentService } from "./interface";
+import { IDeploymentDto, IDeploymentService } from "./interface";
 
 
 const DeploymentService: IDeploymentService = {
 
-    async createAndDeployRepo(body: any): Promise<Types.ObjectId> {
+    async createAndDeployRepo(body: any, topic: string): Promise<any> {
         // create deployment and
-        const deployment = {
+        const deployment: IDeploymentDto = {
             sitePreview: '',
             commitId: '00192',
             log: ['Build started'],
-            createdAt: Date.now()
+            createdAt: new Date(),
+            topic: topic,
+            branch: body.branch,
+            package_manager: body.package_manager,
+            build_command: body.build_command,
+            publish_dir: body.publish_dir,
+            deploymentStatus: "Pending"
         };
 
         const deploymentModel: IDeployment = await DeploymentModel.create(deployment);
         // fetch repo with url name
-        await findOneAndCreateRepo(body, deploymentModel._id);
-        return deploymentModel._id;
+        const repositoryId: any = await findOneAndCreateRepo(body, deploymentModel._id);
+        return {
+            deploymentId: deploymentModel._id,
+            repositoryId: repositoryId._id
+        }
+    },
+    async FindOneDeployment(deploymentId: string): Promise<IDeployment> {
+        // create deployment and
+
+        const filter = {
+            '_id': Types.ObjectId(deploymentId)
+        }
+        const deployment: IDeployment = await DeploymentModel.findById(filter);
+        return deployment;
     }
 }
 
 
-const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Promise<Types.ObjectId> => {
+const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Promise<any> => {
     const filter = {
-        'url': body.github_url
+        'url': body.github_url,
+        'orgId': Types.ObjectId(body.orgId)
     }
 
     console.log('giturl: ', body.github_url);
@@ -39,7 +59,8 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         const updateDeploymentId = {
             $addToSet: {
                 deployments: [deploymentId]
-            }
+            },
+            updateDate: new Date()
         }
         await RepositoryModel.findOneAndUpdate(filter, updateDeploymentId);
         return findOneRepo._id;
@@ -49,7 +70,12 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         name: body.folder_name,
         url: body.github_url,
         'webHook': "xyz",
-        deployments: [deploymentId]
+        deployments: [deploymentId],
+        orgId: Types.ObjectId(body.orgId),
+        package_manager: body.package_manager,
+        build_command: body.build_command,
+        publish_dir: body.publish_dir,
+        branch: body.branch
     };
     const repository: IRepository = await RepositoryModel.create(update);
     const orgFilter = {

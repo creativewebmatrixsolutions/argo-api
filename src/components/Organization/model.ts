@@ -1,5 +1,5 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema, Model } from 'mongoose';
+import { Document, Schema, Model, Types } from 'mongoose';
 import { IUserModel } from '../User/model';
 
 /**
@@ -12,6 +12,13 @@ export interface IRepository extends Document {
     url: String;
     webHook: String;
     deployments: [IDeployment['_id']];
+    updateDate: Date;
+    createDate: Date;
+    orgId: Types.ObjectId;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
+    branch: string;
 }
 
 /**
@@ -24,6 +31,12 @@ export interface IDeployment extends Document {
     commitId: String;
     log: [String];
     createdAt: any;
+    topic: string;
+    branch: string;
+    deploymentStatus: string;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
 }
 
 /**
@@ -45,17 +58,34 @@ const RepositorySchema: Schema = new Schema({
     name: String,
     url: String,
     webHook: String,
-    deployments: {
+    deployments: [{
         type: [Schema.Types.ObjectId],
         ref: 'Deployment',
+    }],
+    createDate: {
+        type: Date, default: new Date()
     },
+    updateDate: {
+        type: Date, default: new Date()
+    },
+    orgId: Types.ObjectId,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
+    branch: String
 });
 
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
     log: [String],
+    topic: String,
     createdAt: { type: String, default: new Date() },
+    branch: String,
+    deploymentStatus: String,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
 });
 
 const OrganizationSchema: Schema = new Schema(
