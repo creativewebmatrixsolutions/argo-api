@@ -15,6 +15,10 @@ export interface IRepository extends Document {
     updateDate: Date;
     createDate: Date;
     orgId: Types.ObjectId;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
+    branch: string;
 }
 
 /**
@@ -28,7 +32,7 @@ export interface IDeployment extends Document {
     log: [String];
     createdAt: any;
     topic: string;
-    branch: string
+    branch: string;
     deploymentStatus: string;
     package_manager: string;
     build_command: string;
@@ -64,7 +68,11 @@ const RepositorySchema: Schema = new Schema({
     updateDate: {
         type: Date, default: new Date()
     },
-    orgId: Types.ObjectId
+    orgId: Types.ObjectId,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
+    branch: String
 });
 
 const DeploymentSchema: Schema = new Schema({

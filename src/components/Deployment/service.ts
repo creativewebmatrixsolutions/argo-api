@@ -71,7 +71,11 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         url: body.github_url,
         'webHook': "xyz",
         deployments: [deploymentId],
-        orgId: Types.ObjectId(body.orgId)
+        orgId: Types.ObjectId(body.orgId),
+        package_manager: body.package_manager,
+        build_command: body.build_command,
+        publish_dir: body.publish_dir,
+        branch: body.branch
     };
     const repository: IRepository = await RepositoryModel.create(update);
     const orgFilter = {
