@@ -70,8 +70,7 @@ const RepositoryService: IRepositoryService = {
                     'branch': body.branch
                 }
             }
-            console.log(id);
-            const repository: IRepository = await RepositoryModel.findOneAndUpdate(filter, update);
+            await RepositoryModel.findOneAndUpdate(filter, update);
             return true;
 
         } catch (error) {

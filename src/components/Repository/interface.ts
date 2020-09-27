@@ -20,5 +20,5 @@ export interface IRepositoryService {
      */
     insert(repository: IRepository, organizationId: string): Promise<IRepository>;
 
-    findOneAndUpdate(id: string, body: any): Promise<any>;
+    findOneAndUpdate(id: string, body: any): Promise<boolean>;
 }
