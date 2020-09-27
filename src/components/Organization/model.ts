@@ -28,6 +28,7 @@ export interface IDeployment extends Document {
     createdAt: any;
     topic: string;
     branch: string
+    deploymentStatus: string;
 }
 
 /**
@@ -68,6 +69,7 @@ const DeploymentSchema: Schema = new Schema({
     topic: String,
     createdAt: { type: String, default: new Date() },
     branch: String,
+    deploymentStatus: String
 });
 
 const OrganizationSchema: Schema = new Schema(

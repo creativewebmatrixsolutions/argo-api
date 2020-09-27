@@ -51,12 +51,14 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                 const arweaveLink = data.trim();
                 updateDeployment = {
                     $addToSet: { log: [data] },
-                    sitePreview: arweaveLink
+                    sitePreview: arweaveLink,
+                    deploymentStatus: "Completed"
                 };
             }
             else {
                 updateDeployment = {
                     $addToSet: { log: [data] },
+                    deploymentStatus: "Pending"
                 };
             }
 
