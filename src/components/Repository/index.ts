@@ -4,6 +4,7 @@ import { IRepository } from '../Organization/model';
 import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
 import { IArgoSessionModel } from '../Session/model';
+import { IRepositoryService } from './interface';
 const { Octokit } = require("@octokit/core");
 
 // /**
@@ -83,3 +84,17 @@ export async function GetUserRepos(req: Request, res: Response, next: NextFuncti
         throw new Error(error)
     }
 }
+
+export async function findOneAndUpdate(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+        const repositoryStatus: boolean = await RepositoryService.findOneAndUpdate(req.params.id, req.body)
+        res.status(200).json({
+            success: repositoryStatus
+        });
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
