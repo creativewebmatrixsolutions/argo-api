@@ -1,6 +1,7 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Model, Types } from 'mongoose';
 import { IUserModel } from '../User/model';
+import { string } from 'joi';
 
 /**
  * @export
@@ -19,6 +20,7 @@ export interface IRepository extends Document {
     build_command: string;
     publish_dir: string;
     branch: string;
+    sitePreview: string;
 }
 
 /**
@@ -37,6 +39,7 @@ export interface IDeployment extends Document {
     package_manager: string;
     build_command: string;
     publish_dir: string;
+    github_url: string;
 }
 
 /**
@@ -72,7 +75,8 @@ const RepositorySchema: Schema = new Schema({
     package_manager: String,
     build_command: String,
     publish_dir: String,
-    branch: String
+    branch: String,
+    sitePreview: String
 });
 
 const DeploymentSchema: Schema = new Schema({
@@ -86,6 +90,7 @@ const DeploymentSchema: Schema = new Schema({
     package_manager: String,
     build_command: String,
     publish_dir: String,
+    github_url: String
 });
 
 const OrganizationSchema: Schema = new Schema(

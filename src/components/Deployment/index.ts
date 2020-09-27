@@ -3,9 +3,11 @@ import HttpError from "../../config/error";
 import * as config from "../../config/env/index"
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios'
-import { DeploymentModel, IDeployment } from '../Organization/model';
+import { DeploymentModel, IDeployment, RepositoryModel } from '../Organization/model';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
+import { filter } from 'compression';
+import { Types } from 'mongoose';
 
 
 const io = require('socket.io-client');
@@ -55,6 +57,15 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                     sitePreview: arweaveLink,
                     deploymentStatus: "Deployed"
                 };
+                const repoFilter = {
+                    '_id': Types.ObjectId(deploymentObj.repositoryId)
+                }
+                const update = {
+                    $set: {
+                        "sitePreview": arweaveLink
+                    }
+                }
+                await RepositoryModel.findOneAndUpdate(repoFilter, update);
             }
             else {
                 updateDeployment = {
