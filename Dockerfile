@@ -1,7 +1,7 @@
 FROM node:12
 
 #can be 'development' or 'production'
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 
 # #your app port
 ENV PORT=8080
