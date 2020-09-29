@@ -1,6 +1,7 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema, Model } from 'mongoose';
+import { Document, Schema, Model, Types } from 'mongoose';
 import { IUserModel } from '../User/model';
+import { string } from 'joi';
 
 /**
  * @export
@@ -12,6 +13,14 @@ export interface IRepository extends Document {
     url: String;
     webHook: String;
     deployments: [IDeployment['_id']];
+    updateDate: Date;
+    createDate: Date;
+    orgId: Types.ObjectId;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
+    branch: string;
+    sitePreview: string;
 }
 
 /**
@@ -22,8 +31,15 @@ export interface IRepository extends Document {
 export interface IDeployment extends Document {
     sitePreview: String;
     commitId: String;
-    log: String;
-    createdAt: Date;
+    log: [String];
+    createdAt: any;
+    topic: string;
+    branch: string;
+    deploymentStatus: string;
+    package_manager: string;
+    build_command: string;
+    publish_dir: string;
+    github_url: string;
 }
 
 /**
@@ -45,17 +61,36 @@ const RepositorySchema: Schema = new Schema({
     name: String,
     url: String,
     webHook: String,
-    deployments: {
+    deployments: [{
         type: [Schema.Types.ObjectId],
         ref: 'Deployment',
+    }],
+    createDate: {
+        type: Date, default: new Date()
     },
+    updateDate: {
+        type: Date, default: new Date()
+    },
+    orgId: Types.ObjectId,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
+    branch: String,
+    sitePreview: String
 });
 
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
     log: [String],
-    createdAt: { type: Date, default: new Date() },
+    topic: String,
+    createdAt: { type: String, default: new Date() },
+    branch: String,
+    deploymentStatus: String,
+    package_manager: String,
+    build_command: String,
+    publish_dir: String,
+    github_url: String
 });
 
 const OrganizationSchema: Schema = new Schema(
@@ -65,7 +100,10 @@ const OrganizationSchema: Schema = new Schema(
             image: { type: String, required: false },
             username: String,
         },
-        repositories: [RepositorySchema],
+        repositories: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Repository'
+        }],
         users: [
             {
                 type: Schema.Types.ObjectId,
@@ -80,4 +118,7 @@ const OrganizationSchema: Schema = new Schema(
 );
 
 export const DeploymentModel: Model<IDeployment> = connections.db.model<IDeployment>('Deployment', DeploymentSchema);
+
+export const RepositoryModel: Model<IRepository> = connections.db.model<IRepository>('Repository', RepositorySchema);
+
 export const OrganizationModel: Model<IOrganization> = connections.db.model<IOrganization>('Organization', OrganizationSchema);

@@ -19,10 +19,14 @@ interface IConfig {
         CLIENT_SECRET: string;
         CALLBACK_URL: string;
     };
-    smtp?: { 
+    smtp?: {
         USERNAME: string;
         PASSWORD: string;
     };
+    flaskApi?: {
+        HOST_ADDRESS: string;
+        BASE_ADDRESS: string;
+    }
     secret: string;
 }
 
@@ -45,10 +49,15 @@ const development: IConfig = {
         CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET || 'uvx',
         CALLBACK_URL: process.env.GITLAB_CALLBACK_URL || 'wq',
     },
-    smtp: { 
+    smtp: {
         USERNAME: process.env.SMTP_USERNAME || 'abcd',
         PASSWORD: process.env.SMTP_PASSWORD || 'abcd',
     },
+    flaskApi: {
+        HOST_ADDRESS: process.env.INTERNAL_API || "http://localhost:5000/request_build",
+        BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000/"
+    },
+
     secret: process.env.SECRET || '@QEGTUIARGOTEST'
 };
 

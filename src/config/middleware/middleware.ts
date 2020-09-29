@@ -66,6 +66,7 @@ export function configure(app: express.Application): void {
             ' Authorization,' +
             ' Access-Control-Allow-Credentials'
         );
+        res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.header('Access-Control-Allow-Credentials', 'true');
         next();
     });

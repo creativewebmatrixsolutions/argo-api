@@ -7,7 +7,9 @@ import ProfileRouter from './ProfileRouter';
 import OrganizationRouter from './OrganizationRouter';
 import RepositoryRouter from './RepositoryRouter';
 import InvitationRouter from './InvitationRouter';
+import WebHookRouter from './WebHookRouter';
 
+import LogsRouter from './LogsRouter';
 
 import RepositoryService from '../components/Repository/service';
 
@@ -55,6 +57,14 @@ export function init(app: express.Application): void {
     */
     app.use('/repository', passportConfig.isAuthenticated, RepositoryRouter);
 
+    /**
+    * @description
+    *  Forwards any requests to the /webhook URI
+    *  Also, check if user authenticated
+    * @constructs
+    */
+    app.use('/webhook', passportConfig.isAuthenticated, WebHookRouter);
+
     // app.use('/logs', LogsRouter);
 
 
@@ -64,13 +74,14 @@ export function init(app: express.Application): void {
      */
     app.use('/auth', AuthRouter);
 
-     /**
-     * @description Forwards any requests to the /invite URI to our AuthRouter
-     * @constructs
-     */
+    /**
+    * @description Forwards any requests to the /invite URI to our AuthRouter
+    * @constructs
+    */
     app.use('/invite', passportConfig.isAuthenticated, InvitationRouter);
 
 
+    app.use('/logs', LogsRouter);
     /**
      * @description
      *  If swagger.json file exists in root folder, shows swagger api description
