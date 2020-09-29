@@ -28,7 +28,7 @@ export async function createWebHook(
     next: NextFunction
   ): Promise<void> {
     try {
-        const response: any = await WebHookService.createHook(req.body);
+        const response: any = await WebHookService.createHook(req);
 
         res.status(200).json(response);
     } catch (error) {
@@ -63,10 +63,10 @@ export async function pushNotify(
             topic: uniqueTopicName,
             package_manager: repoData.package_manager,
             branch: branchName,
-            build_command: repoData.publish_dir,
+            build_command: repoData.build_command,
             publish_dir: repoData.publish_dir
         };
-        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
+        const deploymentObj: any = await DeploymentService.createAndDeployRepo(body, uniqueTopicName);
 
         console.log(uniqueTopicName);
         socket.on(uniqueTopicName, async (data: any) => {

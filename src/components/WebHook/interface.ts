@@ -1,4 +1,4 @@
-import { IWebHook } from './model';
+import { Request } from 'express';
 
 export interface IInternalApiDto {
     github_url: string;
@@ -20,5 +20,5 @@ export interface IWebHookService {
    * @returns {Promise<IWebHook>}
    * @memberof IWebHookService
    */
-    createHook(webHookCreationDto: IWebHook): Promise<any>;
+    createHook(req: Request): Promise<any>;
 }

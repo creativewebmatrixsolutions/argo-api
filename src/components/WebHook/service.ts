@@ -4,6 +4,7 @@ import JWTTokenService from '../Session/service';
 import { IArgoSessionModel } from '../Session/model';
 const { Octokit } = require('@octokit/core');
 import config from '../../config/env/index';
+import { Request } from 'express';
 
 /**
  * @export
@@ -15,9 +16,10 @@ const WebHookService: IWebHookService = {
      * @returns {Promise <IUserInvite>}
      * @memberof InvitationService
      */
-    async createHook(webHookCreationDto: IWebHook): Promise<any> {
+    async createHook(req: Request): Promise<any> {
         try {
-            const getToken: any = await JWTTokenService.DecodeToken(webHookCreationDto);
+            const webHookCreationDto = req.body as IWebHook;
+            const getToken: any = await JWTTokenService.DecodeToken(req);
             const decodeToken: any = await JWTTokenService.VerifyToken(getToken);
 
             const argoSession: IArgoSessionModel = await JWTTokenService.FindOneBySessionId(
