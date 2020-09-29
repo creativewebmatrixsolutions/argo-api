@@ -26,8 +26,9 @@ interface IConfig {
     flaskApi?: {
         HOST_ADDRESS: string;
         BASE_ADDRESS: string;
-    }
+    };
     secret: string;
+    pushNotifyUrl?: string;
 }
 
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
@@ -57,8 +58,8 @@ const development: IConfig = {
         HOST_ADDRESS: process.env.INTERNAL_API || "http://localhost:5000/request_build",
         BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000/"
     },
-
-    secret: process.env.SECRET || '@QEGTUIARGOTEST'
+    secret: process.env.SECRET || '@QEGTUIARGOTEST',
+    pushNotifyUrl: process.env.PUSH_NOTIFY_URL
 };
 
 const production: IConfig = {

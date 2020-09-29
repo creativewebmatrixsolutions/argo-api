@@ -26,7 +26,6 @@ const socket = io(config.default.flaskApi.BASE_ADDRESS);
  */
 export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
         const uniqueTopicName = uuidv4();
         const splitUrl = req.body.github_url.split("/");
         const folderName = splitUrl[splitUrl.length - 1].split(".")[0];

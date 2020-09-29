@@ -14,6 +14,14 @@ export interface IRepositoryService {
     findOne(id: string): Promise<IRepository>;
 
     /**
+     * @param {string} repoName
+     * @param {string} branchName
+     * @returns {Promise < IRepository >}
+     * @memberof UserService
+     */
+    findRepoByNameAndBranch(repoName: string, branchName: string): Promise<IRepository>;
+
+    /**
      * @param {IOrganization} IOrganizationModel
      * @returns {Promise<IOrganization>}
      * @memberof IRepositoryService

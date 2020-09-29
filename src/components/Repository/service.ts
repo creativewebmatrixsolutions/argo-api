@@ -27,6 +27,24 @@ const RepositoryService: IRepositoryService = {
     },
 
     /**
+     * @param {string} repoName
+     * @param {string} branchName
+     * @returns {Promise < IRepository >}
+     * @memberof UserService
+     */
+    async findRepoByNameAndBranch(repoName: string, branchName: string): Promise<IRepository> {
+        try {
+            const repository: IRepository = await RepositoryModel.findOne({
+                name: repoName, branch: branchName
+            }).select('name package_manager build_command publish_dir -_id');
+            
+            return repository;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    /**
      * @param {IUserModel} user
      * @returns {Promise < IRepository >}
      * @memberof UserService
