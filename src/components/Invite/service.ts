@@ -3,6 +3,11 @@ import * as nodemailer from 'nodemailer';
 import { IInvitationService } from './interface';
 import { IUserInvite, UserInviteModel } from './model';
 import config from '../../config/env/index';
+import * as path from 'path';
+// tslint:disable-next-line: typedef
+const EmailTemplate = require('email-templates').EmailTemplate;
+// tslint:disable-next-line: typedef
+const templatesDir = path.resolve(__dirname, '../../templates');
 
 
 /**
@@ -29,20 +34,31 @@ const InvitationService: IInvitationService = {
                 },
             });
 
-            const options: any = {
-                from: '"Argo Setup 👻" argotesting11@gmail.com', // sender address
-                // tslint:disable-next-line: object-shorthand-properties-first
-                to, // list of receivers
-                subject: 'Hello ✔', // Subject line
-                text: 'Argo testing mail', // plain text body
-                html: `http://localhost:3000/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`, // html body
+            const template: any = new EmailTemplate(path.join(templatesDir, 'user-org-invite'));
+            const locals: any = {
+                orgName,
+                inviteLink: `http://localhost:3000/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
             };
 
-            _transporter.sendMail(options, (error, info) => {
-                if (error) {
-                    return console.log(`error: ${error}`);
+            template.render(locals,  (err: any, results: any) => {
+                if (err) {
+                    return console.error(err);
                 }
-                console.log(`Message Sent ${info.response}`);
+                const options: any = {
+                    from: '"Argo Setup 👻" argotesting11@gmail.com', // sender address
+                // tslint:disable-next-line: object-shorthand-properties-first
+                    to, // list of receivers
+                    subject: `Invitation to ArGo: ${orgName}`, // Subject line
+                    html: results.html,
+                    text: results.text
+                };
+
+                _transporter.sendMail(options, (error, info) => {
+                    if (error) {
+                        return console.log(`error: ${error}`);
+                    }
+                    console.log(`Message Sent ${info.response}`);
+                });
             });
 
             return true;
