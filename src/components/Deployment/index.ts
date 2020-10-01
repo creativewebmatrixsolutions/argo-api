@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import HttpError from "../../config/error";
-import * as config from "../../config/env/index"
+import config from '../../config/env/index';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios'
 import { DeploymentModel, IDeployment, RepositoryModel } from '../Organization/model';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
-import { filter } from 'compression';
 import { Types } from 'mongoose';
 
 
@@ -15,7 +14,7 @@ const io = require('socket.io-client');
 const Server = require('socket.io');
 const emitter = new Server();
 
-const socket = io(config.default.flaskApi.BASE_ADDRESS);
+const socket = io(config.flaskApi.BASE_ADDRESS);
 
 /**
  * @export
@@ -47,7 +46,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             const depFilter = {
                 '_id': deploymentObj.deploymentId
             };
-            let isLink = data.indexOf("https://arweave.net/") != -1;
+            let isLink = data.indexOf(config.arweaveUrl) != -1;
             let updateDeployment: any;
             if (isLink) {
                 const arweaveLink = data.trim();
@@ -75,7 +74,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
 
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch(err => console.log(err));
         });
-        setTimeout(() => axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err)), 2000);
+        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err)), 2000);
 
         res.status(200).json({
             success: true,

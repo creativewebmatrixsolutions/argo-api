@@ -17,10 +17,10 @@ const templatesDir = path.resolve(__dirname, '../../templates');
 
 const InvitationService: IInvitationService = {
     async sendMail(
-    to: string,
-    inviteId: string,
-    orgName: string
-  ): Promise<Boolean> {
+        to: string,
+        inviteId: string,
+        orgName: string
+    ): Promise<Boolean> {
         let _transporter: nodemailer.Transporter;
         try {
             _transporter = nodemailer.createTransport({
@@ -37,16 +37,16 @@ const InvitationService: IInvitationService = {
             const template: any = new EmailTemplate(path.join(templatesDir, 'user-org-invite'));
             const locals: any = {
                 orgName,
-                inviteLink: `http://localhost:3000/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
+                inviteLink: config.argoReact.BASE_ADDRESS + `/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
             };
 
-            template.render(locals,  (err: any, results: any) => {
+            template.render(locals, (err: any, results: any) => {
                 if (err) {
                     return console.error(err);
                 }
                 const options: any = {
                     from: '"Argo Setup 👻" argotesting11@gmail.com', // sender address
-                // tslint:disable-next-line: object-shorthand-properties-first
+                    // tslint:disable-next-line: object-shorthand-properties-first
                     to, // list of receivers
                     subject: `Invitation to ArGo: ${orgName}`, // Subject line
                     html: results.html,
@@ -67,26 +67,26 @@ const InvitationService: IInvitationService = {
         }
     },
 
-  /**
-   * @param {string} id
-   * @returns {Promise <IUserInvite >}
-   * @memberof InvitationService
-   */
+    /**
+     * @param {string} id
+     * @returns {Promise <IUserInvite >}
+     * @memberof InvitationService
+     */
     async findOne(id: string): Promise<IUserInvite> {
         try {
             return await UserInviteModel.findOne({
-        _id: Types.ObjectId(id),
-      }).populate('organizations', '_id');
+                _id: Types.ObjectId(id),
+            }).populate('organizations', '_id');
         } catch (error) {
             throw new Error(error.message);
         }
     },
 
-  /**
-   * @param {IUserInvite} userInvite
-   * @returns {Promise <IUserInvite>}
-   * @memberof InvitationService
-   */
+    /**
+     * @param {IUserInvite} userInvite
+     * @returns {Promise <IUserInvite>}
+     * @memberof InvitationService
+     */
     async insert(body: IUserInvite): Promise<IUserInvite> {
         try {
             const user: IUserInvite = await UserInviteModel.create(body);
@@ -97,15 +97,15 @@ const InvitationService: IInvitationService = {
         }
     },
 
-  /**
-   * @param {string} id
-   * @returns {Promise <any>}
-   * @memberof UserService
-   */
+    /**
+     * @param {string} id
+     * @returns {Promise <any>}
+     * @memberof UserService
+     */
     async findOneAndUpdate(
-    inviteId: string,
-    status: string
-  ): Promise<IUserInvite> {
+        inviteId: string,
+        status: string
+    ): Promise<IUserInvite> {
         try {
             const filter: any = {
                 _id: inviteId,

@@ -5,7 +5,6 @@ import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
 import { IUserModel } from '../User/model';
 import UserService from '../User/service';
-import { Types } from 'mongoose';
 
 /**
  * @export

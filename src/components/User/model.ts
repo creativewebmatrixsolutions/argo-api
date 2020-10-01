@@ -1,8 +1,7 @@
 import * as connections from '../../config/connection/connection';
-import { Document, Schema, Types } from 'mongoose';
+import { Document, Schema } from 'mongoose';
 import { IOrganization } from '../Organization/model';
-import { boolean } from 'joi';
-import { type } from 'os';
+
 /**
  * @export
  * @interface IProfile

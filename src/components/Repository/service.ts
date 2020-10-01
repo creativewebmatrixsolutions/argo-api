@@ -1,4 +1,3 @@
-import { string } from 'joi';
 import { Types } from 'mongoose';
 import { IRepository, IOrganization, OrganizationModel, RepositoryModel } from '../Organization/model';
 import { IRepositoryService } from './interface';

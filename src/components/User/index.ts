@@ -2,9 +2,6 @@ import UserService from './service';
 import { HttpError } from '../../config/error';
 import { IUserModel } from './model';
 import { NextFunction, Request, Response } from 'express';
-import OrganizationService from '../Organization/service';
-import { IOrganization } from '../Organization/model';
-
 import JWTTokenService from '../Session/service';
 
 
@@ -15,7 +12,7 @@ import JWTTokenService from '../Session/service';
  * @param {NextFunction} next
  * @returns {Promise < void >}
  */
-export async function findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function findAll(res: Response, next: NextFunction): Promise<void> {
     try {
         const users: IUserModel[] = await UserService.findAll();
 
