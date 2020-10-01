@@ -12,7 +12,7 @@ import JWTTokenService from '../Session/service';
  * @param {NextFunction} next
  * @returns {Promise < void >}
  */
-export async function findAll(res: Response, next: NextFunction): Promise<void> {
+export async function findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const users: IUserModel[] = await UserService.findAll();
 

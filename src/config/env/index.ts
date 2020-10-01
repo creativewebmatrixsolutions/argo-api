@@ -32,7 +32,7 @@ interface IConfig {
     };
     secret: string;
     pushNotifyUrl?: string;
-    arweaveUrl?:string;
+    arweaveUrl?: string;
 }
 
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
@@ -67,7 +67,7 @@ const development: IConfig = {
     },
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,
-    arweaveUrl:process.env.ARWEAVE_URL || "https://arweave.net/",
+    arweaveUrl: process.env.ARWEAVE_URL || "https://arweave.net/",
 };
 
 const production: IConfig = {
@@ -100,7 +100,7 @@ const production: IConfig = {
     },
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,
-    arweaveUrl:process.env.ARWEAVE_URL || "https://arweave.net/",
+    arweaveUrl: process.env.ARWEAVE_URL || "https://arweave.net/",
 };
 
 const test: IConfig = {
