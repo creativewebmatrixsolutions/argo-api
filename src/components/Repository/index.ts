@@ -4,7 +4,6 @@ import { IRepository } from '../Organization/model';
 import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
 import { IArgoSessionModel } from '../Session/model';
-import { IRepositoryService } from './interface';
 const { Octokit } = require("@octokit/core");
 
 // /**

@@ -1,4 +1,3 @@
-import { IUserModel } from '../User/model';
 import { IOrganization } from './model';
 
 /**

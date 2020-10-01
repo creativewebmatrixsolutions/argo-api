@@ -1,6 +1,6 @@
 import { HttpError } from '../../config/error';
 import { NextFunction, Request, Response } from 'express';
-import * as config from '../../config/env/index'
+import config from '../../config/env/index';
 import WebHookService from './service';
 const { Octokit } = require('@octokit/core');
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,7 @@ import RepositoryService from '../Repository/service';
 const io = require('socket.io-client');
 const Server = require('socket.io');
 const emitter = new Server();
-const socket = io(config.default.flaskApi.BASE_ADDRESS);
+const socket = io(config.flaskApi.BASE_ADDRESS);
 
 /**
  * @export
@@ -26,7 +26,7 @@ export async function createWebHook(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> {
+): Promise<void> {
     try {
         const response: any = await WebHookService.createHook(req);
 
@@ -49,7 +49,7 @@ export async function pushNotify(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> {
+): Promise<void> {
     try {
         const uniqueTopicName: string = uuidv4();
         const splitUrl: any = req.body.repository.clone_url.split('/');
@@ -74,7 +74,7 @@ export async function pushNotify(
             const depFilter: any = {
                 _id: deploymentObj.deploymentId
             };
-            const isLink: any = data.indexOf('https://arweave.net/') !== -1;
+            const isLink: any = data.indexOf(config.arweaveUrl) !== -1;
             let updateDeployment: any;
 
             if (isLink) {
@@ -85,7 +85,7 @@ export async function pushNotify(
                     sitePreview: arweaveLink,
                     deploymentStatus: 'Deployed'
                 };
-            }else {
+            } else {
                 updateDeployment = {
                     $addToSet: { log: [data] },
                     deploymentStatus: 'Pending'
@@ -94,7 +94,7 @@ export async function pushNotify(
 
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch((err) => console.log(err));
         });
-        setTimeout(() => axios.post(config.default.flaskApi.HOST_ADDRESS, body).catch((err) => console.log(err)), 2000);
+        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch((err) => console.log(err)), 2000);
 
         res.status(200).json({
             success: true,
