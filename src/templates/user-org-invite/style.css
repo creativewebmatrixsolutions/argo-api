@@ -37,6 +37,11 @@ h2 {
     font-size: 16px;
 }
 
+.bold-black {
+    color: #000;
+    font-weight: 500;
+}
+
 .card-header {
     border-bottom: 1px solid #eeeeee;
     padding: 12px;

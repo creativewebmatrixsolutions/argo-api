@@ -19,7 +19,8 @@ const InvitationService: IInvitationService = {
     async sendMail(
         to: string,
         inviteId: string,
-        orgName: string
+        orgName: string,
+        invitingUser: string
     ): Promise<Boolean> {
         let _transporter: nodemailer.Transporter;
         try {
@@ -37,7 +38,9 @@ const InvitationService: IInvitationService = {
             const template: any = new EmailTemplate(path.join(templatesDir, 'user-org-invite'));
             const locals: any = {
                 orgName,
-                inviteLink: config.argoReact.BASE_ADDRESS + `/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
+                invitingUser,
+                inviteLink: config.argoReact.BASE_ADDRESS + 
+                    `invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
             };
 
             template.render(locals, (err: any, results: any) => {
