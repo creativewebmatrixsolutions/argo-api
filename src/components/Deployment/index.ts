@@ -1,20 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-import HttpError from "../../config/error";
+import HttpError from '../../config/error';
 import config from '../../config/env/index';
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios'
+import axios from 'axios';
 import { DeploymentModel, IDeployment, RepositoryModel } from '../Organization/model';
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
 import { Types } from 'mongoose';
 
 
-const io = require('socket.io-client');
+const io: any = require('socket.io-client');
 
-const Server = require('socket.io');
-const emitter = new Server();
+const Server: any = require('socket.io');
+const emitter: any = new Server();
 
-const socket = io(config.flaskApi.BASE_ADDRESS);
+const socket: any = io(config.flaskApi.BASE_ADDRESS);
 
 /**
  * @export
@@ -25,9 +25,9 @@ const socket = io(config.flaskApi.BASE_ADDRESS);
  */
 export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const uniqueTopicName = uuidv4();
-        const splitUrl = req.body.github_url.split("/");
-        const folderName = splitUrl[splitUrl.length - 1].split(".")[0];
+        const uniqueTopicName: string = uuidv4();
+        const splitUrl: string = req.body.github_url.split('/');
+        const folderName: string = splitUrl[splitUrl.length - 1].split('.')[0];
         const fullGitHubPath: string = `${req.body.github_url} --branch ${req.body.branch}`;
         const body: IInternalApiDto = {
             github_url: fullGitHubPath,
@@ -36,45 +36,49 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             package_manager: req.body.package_manager,
             branch: req.body.branch,
             build_command: req.body.build_command,
-            publish_dir: req.body.publish_directory
+            publish_dir: req.body.publish_dir
         };
-        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName)
+        const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
 
         console.log(uniqueTopicName);
         socket.on(uniqueTopicName, async (data: any) => {
             emitter.emit(uniqueTopicName, data);
-            const depFilter = {
-                '_id': deploymentObj.deploymentId
+            const depFilter: any = {
+                _id: deploymentObj.deploymentId
             };
-            let isLink = data.indexOf(config.arweaveUrl) != -1;
+            const isLink: boolean = data.indexOf(config.arweaveUrl) !== -1;
+
             let updateDeployment: any;
+
             if (isLink) {
-                const arweaveLink = data.trim();
+                const arweaveLink: string = data.trim();
+                
                 updateDeployment = {
-                    $addToSet: { log: [data] },
+                    $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
                     sitePreview: arweaveLink,
-                    deploymentStatus: "Deployed"
+                    deploymentStatus: 'Deployed'
                 };
-                const repoFilter = {
-                    '_id': Types.ObjectId(deploymentObj.repositoryId)
-                }
-                const update = {
+                const repoFilter: any = {
+                    _id: Types.ObjectId(deploymentObj.repositoryId)
+                };
+
+                const update: any = {
                     $set: {
-                        "sitePreview": arweaveLink
+                        sitePreview: arweaveLink
                     }
-                }
+                };
+                
                 await RepositoryModel.findOneAndUpdate(repoFilter, update);
-            }
-            else {
+            } else {
                 updateDeployment = {
-                    $addToSet: { log: [data] },
-                    deploymentStatus: "Pending"
+                    $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
+                    deploymentStatus: 'Pending'
                 };
             }
 
-            await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch(err => console.log(err));
+            await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch((err: Error) => console.log(err));
         });
-        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch(err => console.log(err)), 2000);
+        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch((err: Error) => console.log(err)), 2000);
 
         res.status(200).json({
             success: true,
@@ -90,8 +94,9 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
 
 export async function FindDeploymentById(req: Request, res: Response, next: NextFunction): Promise<void> {
     const deployment: IDeployment = await DeploymentService.FindOneDeployment(req.params.id);
+
     res.status(200).json({
+        deployment,
         success: true,
-        deployment: deployment
     });
 }
