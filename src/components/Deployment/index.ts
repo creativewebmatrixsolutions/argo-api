@@ -36,7 +36,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             package_manager: req.body.package_manager,
             branch: req.body.branch,
             build_command: req.body.build_command,
-            publish_dir: req.body.publish_directory
+            publish_dir: req.body.publish_dir
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName)
 

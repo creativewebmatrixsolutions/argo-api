@@ -10,6 +10,8 @@ import config from '../env/index';
 import * as mongo from 'connect-mongo';
 import { HttpError } from '../error/index';
 import { sendHttpErrorModule } from '../error/sendHttpError';
+
+
 // import { MongoStore } from 'connect-mongo';
 const MongoStore: mongo.MongoStoreFactory = mongo(session);
 
@@ -66,7 +68,7 @@ export function configure(app: express.Application): void {
             ' Authorization,' +
             ' Access-Control-Allow-Credentials'
         );
-        res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.header('Access-Control-Allow-Origin', config.argoReact.BASE_ADDRESS);
         res.header('Access-Control-Allow-Credentials', 'true');
         next();
     });

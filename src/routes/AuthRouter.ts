@@ -5,6 +5,8 @@ import { IArgoSessionDto } from '../components/Session/interface';
 import JWTTokenService from '../components/Session/service';
 import { IUserModel } from '../components/User/model';
 
+import * as config from '../config/env/index';
+
 /**
  * @constant {express.Router}
  */
@@ -33,7 +35,7 @@ router.get('/github', passport.authenticate('github'));
 router.get(
     '/github/callback',
     passport.authenticate('github', {
-        failureRedirect: 'http://localhost:3000/login',
+        failureRedirect: `${config.default.argoReact.BASE_ADDRESS}/signup`,
     }),
     async (req, res) => {
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
@@ -62,14 +64,14 @@ router.get(
         );
         const token: string = await JWTTokenService.generateToken(dtos);
 
-        res.redirect(`http://localhost:3000/callback/github?token=${token}`);
+        res.redirect(`${config.default.argoReact.BASE_ADDRESS}/callback/github?token=${token}`);
     }
 );
 
 router.delete('/logout', async (req, res) => {
     const token: any = await JWTTokenService.DecodeToken(req);
     const verifiedToken: any = await JWTTokenService.VerifyToken(token);
-    
+
     await JWTTokenService.FindAndRemove(verifiedToken.session_id);
     await req.logOut();
     req.session = null;
@@ -104,7 +106,7 @@ router.get(
 router.get(
     '/gitlab/callback',
     passport.authenticate('gitlab', {
-        failureRedirect: 'http://localhost:3000/signup',
+        failureRedirect: `${config.default.argoReact.BASE_ADDRESS}/signup`,
     }),
     async (req, res) => {
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
@@ -131,7 +133,7 @@ router.get(
         );
         const token: string = await JWTTokenService.generateToken(dtos);
 
-        res.redirect(`http://localhost:3000/callback/github?token=${token}`);
+        res.redirect(`${config.default.argoReact.BASE_ADDRESS}/callback/github?token=${token}`);
     }
 );
 
