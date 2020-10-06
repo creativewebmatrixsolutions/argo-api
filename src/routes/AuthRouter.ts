@@ -36,17 +36,18 @@ router.get(
         failureRedirect: 'http://localhost:3000/login',
     }),
     async (req, res) => {
+        console.log(req.user.profile)
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
             provider_profile: {
                 ...req.user.profile._json,
                 username: req.user.profile.username,
-                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value
+                email: req.user.profile.emails?.filter((email: any) => email.primary || email.primary === undefined)[0].value
             },
             provider: { name: req.user.profile.provider },
             argo_profile: {
                 username: req.user.profile.username,
                 avatar: req.user.profile._json.avatar_url,
-                email: req.user.profile.emails.filter((email: any) => email.primary)[0].value,
+                email: req.user.profile.emails?.filter((email: any) => email.primary || email.primary === undefined)[0].value,
                 name: req.user.profile.displayName
             }
         });

@@ -58,11 +58,11 @@ const OrganizationService: IOrganizationService = {
         }
     },
 
-    async insertDefault(id: string): Promise<IOrganization> {
+    async insertDefault(user_name: string, id: string): Promise<IOrganization> {
         try {
             const defaultOrganization: any = {
-                'profile.name': 'default',
-                'profile.username': 'default',
+                'profile.name': `${user_name}'s Org`,
+                'profile.username': `${user_name}-org`,
                 users: [id],
             };
             const organization: IOrganization = await OrganizationModel.create(

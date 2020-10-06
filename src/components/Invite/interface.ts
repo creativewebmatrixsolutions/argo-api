@@ -8,7 +8,7 @@ export interface IInvitationService {
   /**
    * @memberof IInvitationService
    */
-    sendMail(to: string, inviteId: string, orgName: string): Promise<Boolean>;
+    sendMail(to: string, inviteId: string, orgName: string, invitingUser: string): Promise<Boolean>;
 
   /**
    * @param {string} id
