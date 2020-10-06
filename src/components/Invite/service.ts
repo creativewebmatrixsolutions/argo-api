@@ -24,10 +24,10 @@ const InvitationService: IInvitationService = {
         let _transporter: nodemailer.Transporter;
         try {
             _transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                service: 'gmail',
+                host: 'smtpout.secureserver.net',
+                port: 465,
+                secure: true, // true for 465, false for other ports
+                // service: 'gmail',
                 auth: {
                     user: config.smtp.USERNAME,
                     pass: config.smtp.PASSWORD, // generated ethereal password
@@ -45,7 +45,7 @@ const InvitationService: IInvitationService = {
                     return console.error(err);
                 }
                 const options: any = {
-                    from: '"Argo Setup 👻" argotesting11@gmail.com', // sender address
+                    from: `"Argo Team" ${config.smtp.USERNAME}`, // sender address
                     // tslint:disable-next-line: object-shorthand-properties-first
                     to, // list of receivers
                     subject: `Invitation to ArGo: ${orgName}`, // Subject line
