@@ -39,8 +39,8 @@ const InvitationService: IInvitationService = {
             const locals: any = {
                 orgName,
                 invitingUser,
-                inviteLink: config.argoReact.BASE_ADDRESS + 
-                    `invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
+                inviteLink: config.argoReact.BASE_ADDRESS +
+                    `/invite/callback?ref=${encodeURIComponent(inviteId)}&orgName=${encodeURIComponent(orgName)}`,
             };
 
             template.render(locals, (err: any, results: any) => {
