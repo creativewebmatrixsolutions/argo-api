@@ -4,7 +4,6 @@ import { IRepository } from '../Organization/model';
 import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
 import { IArgoSessionModel } from '../Session/model';
-import { IRepositoryService } from './interface';
 const { Octokit } = require("@octokit/core");
 
 // /**
@@ -76,7 +75,8 @@ export async function GetUserRepos(req: Request, res: Response, next: NextFuncti
         console.log(argoSession);
         const octokit = new Octokit({ auth: `${argoSession.access_token}` });
         const response = await octokit.request("GET /user/repos", {
-            type: "all"
+            type: "all",
+            per_page: 100
         });
         res.status(200).json(response);
 

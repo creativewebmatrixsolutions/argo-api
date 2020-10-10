@@ -28,19 +28,21 @@ const AuthService: IAuthService = {
 
             if (query) {
                 console.log('User already present');
+
                 return query;
             }
             const saved: IUserModel = await user.save();
 
-            const org: IOrganization = await OrganizationService.insertDefault(saved.id);
+            const org: IOrganization = await OrganizationService.insertDefault(saved.provider_profile.username, saved.id);
 
-            const filter = {
-                '_id': Types.ObjectId(saved.id)
-            }
-            const update = {
+            const filter: any = {
+                _id: Types.ObjectId(saved.id)
+            };
+            const update: any = {
                 $addToSet: { organizations: [Types.ObjectId(org.id)] }
-            }
+            };
             const updatedModel: IUserModel = await UserModel.updateOne(filter, update);
+
             return saved;
         } catch (error) {
             throw new Error(error);

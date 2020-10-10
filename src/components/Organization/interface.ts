@@ -1,4 +1,3 @@
-import { IUserModel } from '../User/model';
 import { IOrganization } from './model';
 
 /**
@@ -39,7 +38,7 @@ export interface IOrganizationService {
      * @returns {Promise<IOrganization>}
      * @memberof IOrganizationService
      */
-    insertDefault(id: string): Promise<IOrganization>;
+    insertDefault(user_name: string, id: string): Promise<IOrganization>;
 
 
     findOneAndUpdate(Id: string, userId: string): Promise<any>;

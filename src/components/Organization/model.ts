@@ -1,7 +1,6 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema, Model, Types } from 'mongoose';
 import { IUserModel } from '../User/model';
-import { string } from 'joi';
 
 /**
  * @export
@@ -31,7 +30,7 @@ export interface IRepository extends Document {
 export interface IDeployment extends Document {
     sitePreview: String;
     commitId: String;
-    log: [String];
+    logs: [{time: String, log: String}];
     createdAt: any;
     topic: string;
     branch: string;
@@ -82,7 +81,7 @@ const RepositorySchema: Schema = new Schema({
 const DeploymentSchema: Schema = new Schema({
     sitePreview: String,
     commitId: String,
-    log: [String],
+    logs: [{ time: String, log: String }],
     topic: String,
     createdAt: { type: String, default: new Date() },
     branch: String,

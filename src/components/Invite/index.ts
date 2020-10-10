@@ -21,7 +21,7 @@ export async function sendInvite(
     try {
         if (req.body) {
             const invitedUser: IUserInvite = await InvitationService.insert(req.body);
-            const response: Boolean = await InvitationService.sendMail(req.body.userEmail, invitedUser.id, req.body.orgName);
+            const response: Boolean = await InvitationService.sendMail(req.body.userEmail, invitedUser.id, req.body.orgName, req.body.invitingUser);
 
             if (response) {
                 res.status(200).json({ message: 'Invitation send' });

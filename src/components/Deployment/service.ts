@@ -1,6 +1,5 @@
-import { string } from "joi";
 import { Types } from "mongoose";
-import { DeploymentModel, IDeployment, IOrganization, IRepository, OrganizationModel, RepositoryModel } from "../Organization/model";
+import { DeploymentModel, IDeployment, IRepository, OrganizationModel, RepositoryModel } from "../Organization/model";
 import { IDeploymentDto, IDeploymentService } from "./interface";
 
 

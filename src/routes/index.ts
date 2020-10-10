@@ -63,7 +63,7 @@ export function init(app: express.Application): void {
     *  Also, check if user authenticated
     * @constructs
     */
-    app.use('/webhook', passportConfig.isAuthenticated, WebHookRouter);
+    app.use('/webhook', WebHookRouter);
 
     // app.use('/logs', LogsRouter);
 

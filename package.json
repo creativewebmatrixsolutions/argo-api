@@ -14,10 +14,11 @@
     "generator"
   ],
   "scripts": {
-    "build": "tsc --skipLibCheck",
-    "start": "tsc --skipLibCheck && node ./build/config/server/index.js",
+    "build": "rimraf build && tsc --skipLibCheck && npm run copy:templates",
+    "start": "npm run build && node ./build/config/server/index.js",
     "dev": "nodemon",
     "ts:watch": "tsc -w",
+    "copy:templates": "cpx './src/templates/**' 'build/templates'",
     "test": "NODE_ENV=test mocha -r ts-node/register test/index.js --exit"
   },
   "files": [
@@ -35,8 +36,10 @@
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "dotenv": "8.2.0",
+    "email-templates": "2.x",
     "express": "4.17.1",
     "express-session": "^1.17.1",
+    "handlebars": "^4.7.6",
     "helmet": "3.22.0",
     "joi": "14.3.1",
     "jsonwebtoken": "^8.5.1",
@@ -45,8 +48,8 @@
     "passport-github": "^1.1.0",
     "passport-gitlab2": "^5.0.0",
     "ts-node": "8.10.1",
-    "util": "0.12.3",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "util": "0.12.3"
   },
   "devDependencies": {
     "@types/bcrypt": "3.0.0",
@@ -79,11 +82,13 @@
     "@types/yeoman-generator": "3.1.0",
     "axios": "^0.20.0",
     "chai": "4.2.0",
+    "cpx": "^1.5.0",
     "express-jwt": "^6.0.0",
     "jsdoc": "3.5.5",
     "mocha": "6.2.0",
     "nodemailer": "^6.4.11",
     "nodemon": "1.18.10",
+    "rimraf": "^3.0.2",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "source-map-loader": "0.2.4",
