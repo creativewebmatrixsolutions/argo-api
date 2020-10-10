@@ -63,7 +63,7 @@ const development: IConfig = {
         BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000/"
     },
     argoReact: {
-        BASE_ADDRESS: process.env.INTERNAL_FE_BASE_ADDRESS || "http://localhost:3000/"
+        BASE_ADDRESS: process.env.INTERNAL_FE_BASE_ADDRESS || "http://localhost:3000"
     },
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,

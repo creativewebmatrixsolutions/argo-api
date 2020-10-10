@@ -9,6 +9,7 @@ import axios from 'axios';
 import { DeploymentModel, IRepository } from '../Organization/model';
 import DeploymentService from '../Deployment/service';
 import RepositoryService from '../Repository/service';
+import { IWebHook } from './model';
 
 const io = require('socket.io-client');
 const Server = require('socket.io');
@@ -28,7 +29,8 @@ export async function createWebHook(
     next: NextFunction
 ): Promise<void> {
     try {
-        const response: any = await WebHookService.createHook(req);
+        const webHookCreationDto: IWebHook = req.body as IWebHook;
+        const response: any = await WebHookService.createHook(req, webHookCreationDto);
 
         res.status(200).json(response);
     } catch (error) {
@@ -94,7 +96,7 @@ export async function pushNotify(
 
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch((err) => console.log(err));
         });
-        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch((err) => console.log(err)), 2000);
+        setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch((err: any) => console.log(err)), 2000);
 
         res.status(200).json({
             success: true,

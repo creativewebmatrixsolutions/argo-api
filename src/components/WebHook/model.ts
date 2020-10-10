@@ -5,5 +5,4 @@
 export interface IWebHook{
     owner: String;
     repo: String;
-    events: String[];
 }

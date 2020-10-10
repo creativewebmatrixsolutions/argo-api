@@ -7,6 +7,8 @@ import { DeploymentModel, IDeployment, RepositoryModel } from '../Organization/m
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
 import { Types } from 'mongoose';
+import WebHookService from '../WebHook/service';
+import { IWebHook } from '../WebHook/model';
 
 
 const io: any = require('socket.io-client');
@@ -29,6 +31,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         const splitUrl: string = req.body.github_url.split('/');
         const folderName: string = splitUrl[splitUrl.length - 1].split('.')[0];
         const fullGitHubPath: string = `${req.body.github_url} --branch ${req.body.branch}`;
+        const autoPublish: boolean = req.body.auto_publish;
         const body: IInternalApiDto = {
             github_url: fullGitHubPath,
             folder_name: folderName,
@@ -79,7 +82,14 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             await DeploymentModel.findOneAndUpdate(depFilter, updateDeployment).catch((err: Error) => console.log(err));
         });
         setTimeout(() => axios.post(config.flaskApi.HOST_ADDRESS, body).catch((err: Error) => console.log(err)), 2000);
+        if (autoPublish) {
+            const webHookDto: IWebHook = { 
+                owner: req.body.owner,
+                repo: req.body.folder_name
+            };
 
+            WebHookService.createHook(req, webHookDto);
+        }
         res.status(200).json({
             success: true,
             topic: uniqueTopicName,

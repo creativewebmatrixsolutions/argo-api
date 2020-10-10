@@ -16,9 +16,8 @@ const WebHookService: IWebHookService = {
      * @returns {Promise <IUserInvite>}
      * @memberof InvitationService
      */
-    async createHook(req: Request): Promise<any> {
+    async createHook(req: Request, webHookCreationDto: IWebHook): Promise<any> {
         try {
-            const webHookCreationDto = req.body as IWebHook;
             const getToken: any = await JWTTokenService.DecodeToken(req);
             const decodeToken: any = await JWTTokenService.VerifyToken(getToken);
 
@@ -31,7 +30,7 @@ const WebHookService: IWebHookService = {
                 {
                     owner: webHookCreationDto.owner, // 'argoapp-live'
                     repo: webHookCreationDto.repo, // 'argo-api'
-                    events: webHookCreationDto.events, // ['push']
+                    events: ['push'],
                     config: {
                         url: config.pushNotifyUrl, // URL from NGROK 'http://bbd64cf988c3.ngrok.io'
                         content_type: 'json',
@@ -44,7 +43,7 @@ const WebHookService: IWebHookService = {
         } catch (error) {
             throw new Error(error.message);
         }
-    },
+    }
 };
 
 export default WebHookService;
