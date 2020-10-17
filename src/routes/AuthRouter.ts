@@ -51,6 +51,10 @@ router.get(
                 avatar: req.user.profile._json.avatar_url,
                 email: req.user.profile.emails?.filter((email: any) => email.primary || email.primary === undefined)[0].value,
                 name: req.user.profile.displayName
+            },
+            argo_wallet: {
+                wallet_address: "",
+                wallet_balance: 0
             }
         });
 
@@ -120,6 +124,10 @@ router.get(
                 avatar: req.user.profile._json.avatar_url,
                 email: req.user.profile._json.email,
                 name: req.user.profile._json.name
+            },
+            argo_wallet: {
+                wallet_address: "",
+                wallet_balance: 0
             }
         });
 

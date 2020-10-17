@@ -7,6 +7,8 @@ import { DeploymentModel, IDeployment, RepositoryModel } from '../Organization/m
 import { IInternalApiDto } from './interface';
 import DeploymentService from './service';
 import { Types } from 'mongoose';
+import JWTTokenService from '../Session/service';
+import UserService from '../User/service';
 
 
 const io: any = require('socket.io-client');
@@ -40,7 +42,9 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
 
-        console.log(uniqueTopicName);
+        const globalPrice: number = 0;
+        let startTime: any;
+        let totalGasPrice: number = 0;
         socket.on(uniqueTopicName, async (data: any) => {
             emitter.emit(uniqueTopicName, data);
             const depFilter: any = {
@@ -48,11 +52,20 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             };
             const isLink: boolean = data.indexOf(config.arweaveUrl) !== -1;
 
-            let updateDeployment: any;
+            const indexOfTotalPrice = data.indexOf("Total price:");
 
+            if (!startTime) {
+                startTime = new Date();
+            }
+
+            if (indexOfTotalPrice !== -1) {
+                const splitOne = data.split(":")[1];
+                const splitTwo = splitOne.split("AR");
+                totalGasPrice = splitTwo[0].trim();
+            }
+            let updateDeployment: any;
             if (isLink) {
                 const arweaveLink: string = data.trim();
-                
                 updateDeployment = {
                     $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
                     sitePreview: arweaveLink,
@@ -67,7 +80,12 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                         sitePreview: arweaveLink
                     }
                 };
-                
+                const endDateTime: any = new Date();
+                const totalTime = Math.abs(endDateTime - startTime);
+                const deploymentTime: number = parseInt((totalTime / 1000).toFixed(1));
+                const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+                const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+                let user = await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, totalGasPrice);
                 await RepositoryModel.findOneAndUpdate(repoFilter, update);
             } else {
                 updateDeployment = {

@@ -1,4 +1,4 @@
-import { IArgoUser, IUserModel } from './model';
+import { IArgoUser, IArgoWallet, IUserModel } from './model';
 
 /**
  * @export
@@ -45,4 +45,11 @@ export interface IUserService {
     updateOrganization(orgId: string, userId: string): Promise<IUserModel>;
 
     updateUserOrganization(orgId: string, userId: string): Promise<IUserModel>;
+
+    updateWalletBalance(id: string, wallet: IArgoWallet): Promise<any>;
+
+    updateWalletAddress(id: string, wallet: IArgoWallet): Promise<any>;
+    reduceWalletBalance(id: string, deduction: number): Promise<any>;
+
+    findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number): Promise<boolean>;
 }
