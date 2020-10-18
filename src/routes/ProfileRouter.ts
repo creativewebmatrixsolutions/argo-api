@@ -130,7 +130,42 @@ router.post('/', UserComponent.create);
  */
 router.delete('/:id', UserComponent.remove);
 
-
+/**
+ * PUT method route
+ * @example http://localhost:PORT/v1/users
+ * 
+ * @swagger
+ * /v1/users:
+ *   post:
+ *      description: Update User 
+ *      tags: ["users"]
+ *      security:
+ *       - cookieAuth: []
+ *      requestBody:
+ *        description: user creation request body
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/UserSchema'
+ *            example:
+ *              name: userName
+ *              email: test.user@mail.com
+ *      responses:
+ *        201:
+ *          description: return updated user
+ *          content:
+ *            application/json:
+ *              schema:
+ *                oneOf:
+ *                  - $ref: '#/components/schemas/UserSchema'
+ *        default:
+ *          description: unexpected error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Error'
+ */
 router.put('/', UserComponent.update);
 
 /**
