@@ -169,12 +169,8 @@ const UserService: IUserService = {
             }
             let updatedBalance: number = 0;
             const user = await UserModel.findById(filter);
-            if (user.argo_wallet == null || user.argo_wallet == undefined) {
-                updatedBalance = 0 + wallet.wallet_balance;
-            }
-            else {
-                updatedBalance = user.argo_wallet.wallet_balance + wallet.wallet_balance
-            }
+            let prevBal = (user.argo_wallet.wallet_balance ? user.argo_wallet.wallet_balance : 0);
+            updatedBalance = prevBal + wallet.wallet_balance
             const update = {
                 $set: {
                     'argo_wallet.wallet_balance': updatedBalance,
