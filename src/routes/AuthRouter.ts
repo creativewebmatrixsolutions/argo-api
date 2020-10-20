@@ -4,9 +4,21 @@ import AuthService from '../components/Auth/service';
 import { IArgoSessionDto } from '../components/Session/interface';
 import JWTTokenService from '../components/Session/service';
 import { IUserModel } from '../components/User/model';
-
 import * as config from '../config/env/index';
+import * as fs from 'fs';
+import * as path from 'path';
+import GithubAppService from '../components/GitHubApp/service';
+import * as passportConfig from '../config/middleware/passport';
 
+import console = require('console');
+import { Types } from 'mongoose';
+const { createAppAuth } = require("@octokit/auth-app");
+const { Octokit } = require("@octokit/rest");
+const axios = require('axios').default;
+
+const fullPath = path.join(__dirname, "argoappgit.pem");
+
+const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 /**
  * @constant {express.Router}
  */
@@ -145,6 +157,68 @@ router.get(
         res.redirect(`${config.default.argoReact.BASE_ADDRESS}/callback/github?token=${token}`);
     }
 );
+
+router.get('/github/app', passport.authenticate('github'), async (req, res) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    const instanceAxios = axios.create({
+        baseURL: "https://api.github.com/user/installations",
+        timeout: 1000,
+        headers: {
+            'authorization': `bearer ${getUserToken.token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+    const userInfo = await instanceAxios.get();
+    res.status(200).json({
+        success: true,
+        total_count: userInfo.data.total_count,
+        installations: userInfo.data.installations
+    });
+
+});
+
+router.get('/github/app/auth', passport.authenticate('github'), async (req, res) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        res.redirect(`${config.default.argoReact.BASE_ADDRESS}/deploy/new`);
+    }
+    else {
+        res.redirect(config.default.githubApp.GITHUB_APP_CALLBACK_URL);
+    }
+});
+
+router.get('/github/app/callback', async (req, res) => {
+    const auth = await createAppAuth({
+        id: 84328,
+        privateKey: readAsAsync,
+        installationId: req.query.installation_id,
+        clientId: config.default.githubApp.GITHUB_APP_CLIENT_ID,
+        clientSecret: config.default.githubApp.GITHUB_APP_CLIENT_SECRET,
+    });
+    const authToken = await auth({ type: "oauth", code: req.query.code });
+    const instanceAxios = axios.create({
+        baseURL: "https://api.github.com/user",
+        timeout: 1000,
+        headers: { 'authorization': `bearer ${authToken.token}` }
+    });
+    const userInfo = await instanceAxios.get();
+    console.log(userInfo.data.id, 'githubId');
+    await GithubAppService.findAndCreate(userInfo.data.id, authToken.token, +req.query.installation_id);
+    res.redirect(`${config.default.argoReact.BASE_ADDRESS}/deploy/new`);
+});
+
+router.post('/github/events', async (req, res) => {
+    await GithubAppService.remove(req.body.installation.id);
+    res.status(200).json({
+        success: true
+    });
+});
 
 /**
  * @export {express.Router}

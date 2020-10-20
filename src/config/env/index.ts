@@ -33,6 +33,14 @@ interface IConfig {
     secret: string;
     pushNotifyUrl?: string;
     arweaveUrl?: string;
+    githubApp: {
+        GITHUB_APP_CLIENT_ID: string;
+        GITHUB_APP_CLIENT_SECRET: string;
+        GITHUB_APP_CALLBACK_URL: string;
+    },
+    privateKey: {
+        PRIVATE_KEY: string
+    }
 }
 
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
@@ -68,6 +76,14 @@ const development: IConfig = {
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,
     arweaveUrl: process.env.ARWEAVE_URL || "https://arweave.net/",
+    githubApp: {
+        GITHUB_APP_CLIENT_ID: process.env.GITHUB_APP_CLIENT_ID,
+        GITHUB_APP_CLIENT_SECRET: process.env.GITHUB_APP_CLIENT_SECRET,
+        GITHUB_APP_CALLBACK_URL: process.env.GITHUB_APP_CALLBACK_URL
+    },
+    privateKey: {
+        PRIVATE_KEY: process.env.PRIVATE_KEY
+    }
 };
 
 const production: IConfig = {
@@ -101,22 +117,19 @@ const production: IConfig = {
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,
     arweaveUrl: process.env.ARWEAVE_URL || "https://arweave.net/",
-};
-
-const test: IConfig = {
-    port: process.env.PORT || 3000,
-    database: {
-        MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-        MONGODB_DB_MAIN: 'test_users_db',
-        MONGODB_ATLAS_OPTION: process.env.MONGODB_ATLAS_OPTION || 'retryWrites=true&w=majority',
+    githubApp: {
+        GITHUB_APP_CLIENT_ID: process.env.GITHUB_APP_CLIENT_ID,
+        GITHUB_APP_CLIENT_SECRET: process.env.GITHUB_APP_CLIENT_SECRET,
+        GITHUB_APP_CALLBACK_URL: process.env.GITHUB_APP_CALLBACK_URL
     },
-    secret: process.env.SECRET || '@QEGTUI'
+    privateKey: {
+        PRIVATE_KEY: process.env.PRIVATE_KEY
+    }
 };
 
 const config: {
     [name: string]: IConfig
 } = {
-    test,
     development,
     production
 };

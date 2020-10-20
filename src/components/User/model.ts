@@ -1,7 +1,7 @@
 import * as connections from '../../config/connection/connection';
 import { Document, Schema } from 'mongoose';
 import { IOrganization } from '../Organization/model';
-import { number } from 'joi';
+import { number, string } from 'joi';
 
 /**
  * @export
@@ -132,7 +132,6 @@ export interface IUserModel extends Document {
     totalDepTime?: number;
 }
 
-
 const ProviderSchema: Schema = new Schema({
     name: String
 });
@@ -222,4 +221,8 @@ const UserSchema: Schema = new Schema({
 });
 
 
+
+
 export default connections.db.model<IUserModel>('UserModel', UserSchema);
+
+
