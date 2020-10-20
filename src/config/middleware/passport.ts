@@ -46,7 +46,7 @@ passport.use(new GithubStrategy(
         clientID: config.github.CLIENT_ID,
         clientSecret: config.github.CLIENT_SECRET,
         callbackURL: config.github.CALLBACK_URL,
-        scope: 'admin:org repo user:email'
+        scope: 'user:email'
     },
     (accessToken: any, refreshToken: any, profile: any, cb: any): Promise<void> => {
 
