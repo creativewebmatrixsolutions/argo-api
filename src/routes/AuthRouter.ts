@@ -193,6 +193,12 @@ router.get('/github/app/auth', passport.authenticate('github'), async (req, res)
     }
 });
 
+router.get('/github/app/new', passport.authenticate('github'), async (req, res) => {
+
+    res.redirect(config.default.githubApp.GITHUB_APP_CALLBACK_URL);
+});
+
+
 router.get('/github/app/callback', async (req, res) => {
     const auth = await createAppAuth({
         id: 84328,
