@@ -12,6 +12,7 @@ export interface IInternalApiDto {
     github_url: string;
     folder_name: string;
     topic: string;
+    framework: string;
     package_manager: string;
     branch: string;
     build_command: string;
