@@ -158,7 +158,7 @@ router.get(
     }
 );
 
-router.get('/github/app', passport.authenticate('github'), async (req, res) => {
+router.get('/github/app', async (req, res) => {
     const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
     const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
     let id = Types.ObjectId(deserializedToken.session_id);
@@ -180,21 +180,17 @@ router.get('/github/app', passport.authenticate('github'), async (req, res) => {
 
 });
 
-router.get('/github/app/auth', passport.authenticate('github'), async (req, res) => {
-    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
-    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-    let id = Types.ObjectId(deserializedToken.session_id);
-    const getUserToken = await GithubAppService.findByUserId(id);
+router.get('/github/app/auth/:id', async (req, res) => {
+    const getUserToken = await GithubAppService.findByUserId(Types.ObjectId(`${req.params.id}`));
     if (getUserToken) {
-        res.redirect(`${config.default.argoReact.BASE_ADDRESS}/deploy/new`);
+        res.redirect(`${config.default.argoReact.BASE_ADDRESS}/github/callback/app`);
     }
     else {
         res.redirect(config.default.githubApp.GITHUB_APP_CALLBACK_URL);
     }
 });
 
-router.get('/github/app/new', passport.authenticate('github'), async (req, res) => {
-
+router.get('/github/app/new', async (req, res) => {
     res.redirect(config.default.githubApp.GITHUB_APP_CALLBACK_URL);
 });
 
@@ -216,7 +212,7 @@ router.get('/github/app/callback', async (req, res) => {
     const userInfo = await instanceAxios.get();
     console.log(userInfo.data.id, 'githubId');
     await GithubAppService.findAndCreate(userInfo.data.id, authToken.token, +req.query.installation_id);
-    res.redirect(`${config.default.argoReact.BASE_ADDRESS}/deploy/new`);
+    res.redirect(`${config.default.argoReact.BASE_ADDRESS}/github/callback/app`);
 });
 
 router.post('/github/events', async (req, res) => {
