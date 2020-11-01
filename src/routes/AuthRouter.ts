@@ -212,7 +212,9 @@ router.get('/github/app/callback', async (req, res) => {
 });
 
 router.post('/github/events', async (req, res) => {
-    await GithubAppService.remove(req.body.installation.id);
+    if (req.body.action === 'deleted') {
+        await GithubAppService.remove(req.body.installation.id);
+    }
     res.status(200).json({
         success: true
     });
