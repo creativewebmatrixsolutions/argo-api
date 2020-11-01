@@ -69,7 +69,7 @@ const development: IConfig = {
     },
     flaskApi: {
         HOST_ADDRESS: process.env.INTERNAL_API || "http://localhost:5000/request_build/",
-        BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000"
+        BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000/"
     },
     argoReact: {
         BASE_ADDRESS: process.env.INTERNAL_FE_BASE_ADDRESS || "http://localhost:3000"
