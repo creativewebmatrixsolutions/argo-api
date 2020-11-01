@@ -35,6 +35,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             github_url: fullGitHubPath,
             folder_name: folderName,
             topic: uniqueTopicName,
+            framework: req.body.framework,
             package_manager: req.body.package_manager,
             branch: req.body.branch,
             build_command: req.body.build_command,
