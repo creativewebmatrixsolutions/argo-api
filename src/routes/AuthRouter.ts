@@ -5,20 +5,16 @@ import { IArgoSessionDto } from '../components/Session/interface';
 import JWTTokenService from '../components/Session/service';
 import { IUserModel } from '../components/User/model';
 import * as config from '../config/env/index';
-import * as fs from 'fs';
-import * as path from 'path';
 import GithubAppService from '../components/GitHubApp/service';
-import * as passportConfig from '../config/middleware/passport';
-
 import console = require('console');
 import { Types } from 'mongoose';
 const { createAppAuth } = require("@octokit/auth-app");
 const { Octokit } = require("@octokit/rest");
 const axios = require('axios').default;
 
-const fullPath = path.join(__dirname, "argoappgit.pem");
+// const fullPath = path.join(__dirname, "argoappgit.pem");
 
-const readAsAsync = fs.readFileSync(fullPath, 'utf8');
+// const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 /**
  * @constant {express.Router}
  */
@@ -165,7 +161,7 @@ router.get('/github/app', async (req, res) => {
     const getUserToken = await GithubAppService.findByUserId(id);
     const instanceAxios = axios.create({
         baseURL: "https://api.github.com/user/installations",
-        timeout: 1000,
+        timeout: 2000,
         headers: {
             'authorization': `bearer ${getUserToken.token}`,
             'Accept': 'application/vnd.github.v3+json'
@@ -197,8 +193,8 @@ router.get('/github/app/new', async (req, res) => {
 
 router.get('/github/app/callback', async (req, res) => {
     const auth = await createAppAuth({
-        id: 84328,
-        privateKey: readAsAsync,
+        id: 78959,
+        privateKey: config.default.privateKey.PRIVATE_KEY,
         installationId: req.query.installation_id,
         clientId: config.default.githubApp.GITHUB_APP_CLIENT_ID,
         clientSecret: config.default.githubApp.GITHUB_APP_CLIENT_SECRET,
