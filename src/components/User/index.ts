@@ -3,7 +3,7 @@ import { HttpError } from '../../config/error';
 import { IUserModel } from './model';
 import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
-
+const { request, gql } = require('graphql-request')
 
 /**
  * @export
@@ -110,12 +110,29 @@ export async function update(req: Request, res: Response, next: NextFunction): P
  */
 export async function updateWalletBalance(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
-        const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-        await UserService.updateWalletBalance(deserializedToken.session_id, req.body);
-        res.status(200).json({
-            success: true
-        });
+
+        const endpoint = 'https://arweave.net/graphql'
+        const query = gql`
+        {
+            transaction(id: "${req.body.transaction_id}") {
+              quantity {
+                ar
+              }
+            }
+          }
+            `
+        const data = await request(endpoint, query);
+        if (Number.parseFloat(data.transaction.quantity.ar) === Number.parseFloat(req.body.wallet_balance)) {
+            const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+            const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+            await UserService.updateWalletBalance(deserializedToken.session_id, req.body);
+            res.status(200).json({
+                success: true
+            });
+        }
+        else {
+            new HttpError(500, "Invalid transaction");
+        }
     } catch (error) {
         next(new HttpError(error.message.status, error.message));
     }
