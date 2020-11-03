@@ -31,4 +31,5 @@ export interface IDeploymentDto {
     package_manager: string;
     deploymentStatus: string;
     github_url: string;
+    framework: string;
 }

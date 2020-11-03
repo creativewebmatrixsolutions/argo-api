@@ -20,6 +20,7 @@ export interface IRepository extends Document {
     publish_dir: string;
     branch: string;
     sitePreview: string;
+    framework: string;
 }
 
 /**
@@ -30,7 +31,7 @@ export interface IRepository extends Document {
 export interface IDeployment extends Document {
     sitePreview: String;
     commitId: String;
-    logs: [{time: String, log: String}];
+    logs: [{ time: String, log: String }];
     createdAt: any;
     topic: string;
     branch: string;
@@ -39,6 +40,7 @@ export interface IDeployment extends Document {
     build_command: string;
     publish_dir: string;
     github_url: string;
+    framework: string;
 }
 
 /**
@@ -75,7 +77,8 @@ const RepositorySchema: Schema = new Schema({
     build_command: String,
     publish_dir: String,
     branch: String,
-    sitePreview: String
+    sitePreview: String,
+    framework: String
 });
 
 const DeploymentSchema: Schema = new Schema({
@@ -89,7 +92,8 @@ const DeploymentSchema: Schema = new Schema({
     package_manager: String,
     build_command: String,
     publish_dir: String,
-    github_url: String
+    github_url: String,
+    framework: String,
 });
 
 const OrganizationSchema: Schema = new Schema(
