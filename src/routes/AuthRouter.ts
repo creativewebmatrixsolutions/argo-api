@@ -11,10 +11,12 @@ import { Types } from 'mongoose';
 const { createAppAuth } = require("@octokit/auth-app");
 const { Octokit } = require("@octokit/rest");
 const axios = require('axios').default;
+const fs = require('fs');
+const path = require('path');
 
-// const fullPath = path.join(__dirname, "argoappgit.pem");
+const fullPath = path.join(__dirname, "../templates/user-org-invite/argoappprod.pem");
 
-// const readAsAsync = fs.readFileSync(fullPath, 'utf8');
+const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 /**
  * @constant {express.Router}
  */
@@ -193,13 +195,14 @@ router.get('/github/app/new', async (req, res) => {
 
 router.get('/github/app/callback', async (req, res) => {
     const auth = await createAppAuth({
-        id: 78959,
-        privateKey: config.default.privateKey.PRIVATE_KEY,
+        id: config.default.githubApp.GIT_HUB_APP_ID,
+        privateKey: readAsAsync,
         installationId: req.query.installation_id,
         clientId: config.default.githubApp.GITHUB_APP_CLIENT_ID,
         clientSecret: config.default.githubApp.GITHUB_APP_CLIENT_SECRET,
     });
     const authToken = await auth({ type: "oauth", code: req.query.code });
+    console.log(req.query.installation_id)
     const instanceAxios = axios.create({
         baseURL: "https://api.github.com/user",
         timeout: 1000,

@@ -9,7 +9,12 @@ import DeploymentService from './service';
 import { Types } from 'mongoose';
 import JWTTokenService from '../Session/service';
 import UserService from '../User/service';
+const { createAppAuth } = require("@octokit/auth-app");
+const fs = require('fs');
+const path = require('path');
+const fullPath = path.join(__dirname, "../../templates/user-org-invite/argoappprod.pem");
 
+const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 
 const io: any = require('socket.io-client');
 
@@ -30,7 +35,15 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         const uniqueTopicName: string = uuidv4();
         const splitUrl: string = req.body.github_url.split('/');
         const folderName: string = splitUrl[splitUrl.length - 1].split('.')[0];
-        const fullGitHubPath: string = `${req.body.github_url} --branch ${req.body.branch}`;
+        let fullGitHubPath: string;
+        console.log(req.body.isPrivate);
+        if (req.body.isPrivate) {
+            let installationToken = await createInstallationToken(req.body.installationId, req.body.repositoryId);
+            fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/izrake/${folderName}.git`
+        }
+        else {
+            fullGitHubPath = `${req.body.github_url} --branch ${req.body.branch}`;
+        }
         const body: IInternalApiDto = {
             github_url: fullGitHubPath,
             folder_name: folderName,
@@ -118,4 +131,19 @@ export async function FindDeploymentById(req: Request, res: Response, next: Next
         deployment,
         success: true,
     });
+}
+
+
+const createInstallationToken = async (installationId: any, repositoryId: any) => {
+    const auth = await createAppAuth({
+        id: config.githubApp.GIT_HUB_APP_ID,
+        privateKey: readAsAsync,
+        installationId: installationId,
+        clientId: config.githubApp.GITHUB_APP_CLIENT_ID,
+        clientSecret: config.githubApp.GITHUB_APP_CLIENT_SECRET,
+    });
+    const authToken = await auth({ type: "app" });
+    const installationToken = await auth({ type: "installation" });
+    console.log(installationToken);
+    return installationToken;
 }
