@@ -40,7 +40,14 @@ interface IConfig {
         GIT_HUB_APP_ID: string;
     },
     privateKey: {
-        PRIVATE_KEY: string
+        PRIVATE_KEY: string;
+    },
+    arweave: {
+        CONTRACT_ID: string;
+        HOST: string;
+        PORT: number;
+        PROTOCOL: string;
+        APP_NAME: string;
     }
 }
 
@@ -85,6 +92,13 @@ const development: IConfig = {
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY
+    },
+    arweave: {
+        CONTRACT_ID: process.env.ARWEAVE_CONTRACT_ID || 'ZT-70ovBlkF6cRIqvyHy5lC2LcjudsmCz9z19M4_QC4',
+        HOST: process.env.ARWEAVE_HOST || 'arweave.net',
+        PORT: +process.env.ARWEAVE_PORT || 443,
+        PROTOCOL: process.env.ARWEAVE_PROTOCOL || 'https',
+        APP_NAME: process.env.ARWEAVE_APP_NAME || 'ARGO_APP_LIVE',
     }
 };
 
@@ -127,6 +141,13 @@ const production: IConfig = {
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY
+    },
+    arweave: {
+        CONTRACT_ID: process.env.ARWEAVE_CONTRACT_ID || 'ZT-70ovBlkF6cRIqvyHy5lC2LcjudsmCz9z19M4_QC4',
+        HOST: process.env.ARWEAVE_HOST || 'arweave.net',
+        PORT: +process.env.ARWEAVE_PORT || 443,
+        PROTOCOL: process.env.ARWEAVE_PROTOCOL || 'https',
+        APP_NAME: process.env.ARWEAVE_APP_NAME || 'ARGO_APP_LIVE',
     }
 };
 const test: IConfig = {
@@ -168,6 +189,13 @@ const test: IConfig = {
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY
+    },
+    arweave: {
+        CONTRACT_ID: process.env.ARWEAVE_CONTRACT_ID || 'ZT-70ovBlkF6cRIqvyHy5lC2LcjudsmCz9z19M4_QC4',
+        HOST: process.env.ARWEAVE_HOST || 'arweave.net',
+        PORT: +process.env.ARWEAVE_PORT || 443,
+        PROTOCOL: process.env.ARWEAVE_PROTOCOL || 'https',
+        APP_NAME: process.env.ARWEAVE_APP_NAME || 'ARGO_APP_LIVE',
     }
 };
 

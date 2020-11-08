@@ -8,8 +8,8 @@ import * as config from '../config/env/index';
 import GithubAppService from '../components/GitHubApp/service';
 import console = require('console');
 import { Types } from 'mongoose';
-const { createAppAuth } = require("@octokit/auth-app");
-const { Octokit } = require("@octokit/rest");
+const { createAppAuth } = require('@octokit/auth-app');
+const { Octokit } = require('@octokit/rest');
 const axios = require('axios').default;
 
 // const fullPath = path.join(__dirname, "argoappgit.pem");
@@ -46,7 +46,7 @@ router.get(
         failureRedirect: `${config.default.argoReact.BASE_ADDRESS}/signup`,
     }),
     async (req, res) => {
-        console.log(req.user.profile)
+        console.log(req.user.profile);
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
             provider_profile: {
                 ...req.user.profile._json,
@@ -61,7 +61,7 @@ router.get(
                 name: req.user.profile.displayName
             },
             argo_wallet: {
-                wallet_address: "",
+                wallet_address: '',
                 wallet_balance: 0
             }
         });
@@ -134,7 +134,7 @@ router.get(
                 name: req.user.profile._json.name
             },
             argo_wallet: {
-                wallet_address: "",
+                wallet_address: '',
                 wallet_balance: 0
             }
         });
@@ -160,14 +160,15 @@ router.get('/github/app', async (req, res) => {
     let id = Types.ObjectId(deserializedToken.session_id);
     const getUserToken = await GithubAppService.findByUserId(id);
     const instanceAxios = axios.create({
-        baseURL: "https://api.github.com/user/installations",
+        baseURL: 'https://api.github.com/user/installations',
         timeout: 2000,
         headers: {
-            'authorization': `bearer ${getUserToken.token}`,
-            'Accept': 'application/vnd.github.v3+json'
+            authorization: `bearer ${getUserToken.token}`,
+            Accept: 'application/vnd.github.v3+json'
         }
     });
     const userInfo = await instanceAxios.get();
+
     res.status(200).json({
         success: true,
         total_count: userInfo.data.total_count,
@@ -178,6 +179,7 @@ router.get('/github/app', async (req, res) => {
 
 router.get('/github/app/auth/:id', async (req, res) => {
     const getUserToken = await GithubAppService.findByUserId(Types.ObjectId(`${req.params.id}`));
+
     if (getUserToken) {
         res.redirect(`${config.default.argoReact.BASE_ADDRESS}/github/callback/app`);
     }
@@ -199,13 +201,14 @@ router.get('/github/app/callback', async (req, res) => {
         clientId: config.default.githubApp.GITHUB_APP_CLIENT_ID,
         clientSecret: config.default.githubApp.GITHUB_APP_CLIENT_SECRET,
     });
-    const authToken = await auth({ type: "oauth", code: req.query.code });
+    const authToken = await auth({ type: 'oauth', code: req.query.code });
     const instanceAxios = axios.create({
-        baseURL: "https://api.github.com/user",
+        baseURL: 'https://api.github.com/user',
         timeout: 1000,
-        headers: { 'authorization': `bearer ${authToken.token}` }
+        headers: { authorization: `bearer ${authToken.token}` }
     });
     const userInfo = await instanceAxios.get();
+
     console.log(userInfo.data.id, 'githubId');
     await GithubAppService.findAndCreate(userInfo.data.id, authToken.token, +req.query.installation_id);
     res.redirect(`${config.default.argoReact.BASE_ADDRESS}/github/callback/app`);

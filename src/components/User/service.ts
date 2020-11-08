@@ -3,6 +3,10 @@ import UserModel, { IArgoUser, IArgoWallet, IUserModel } from './model';
 import UserValidation from './validation';
 import { IUserService } from './interface';
 import { Types } from 'mongoose';
+import { readContract, selectWeightedPstHolder } from 'smartweave';
+import Arweave = require('arweave');
+import config from '../../config/env';
+const paywallet: any = require('../../config/assets/arweave-keyfile-Ut6uclytoqe2tiWEOISGZo8M4az1YzFcycw1EOErMBQ.json');
 
 /**
  * @export
@@ -44,14 +48,14 @@ const UserService: IUserService = {
         try {
 
             const filter = {
-                '_id': Types.ObjectId(id)
-            }
+                _id: Types.ObjectId(id)
+            };
 
             const update = {
-                'argo_profile': user
-            }
+                argo_profile: user
+            };
 
-            await UserModel.findOneAndUpdate(filter, update)
+            await UserModel.findOneAndUpdate(filter, update);
             return true;
         } catch (error) {
             throw new Error(error.message);
@@ -103,7 +107,7 @@ const UserService: IUserService = {
         try {
             const filter = {
                 'profile.id': id
-            }
+            };
             const user: IUserModel = await UserModel.findOneAndRemove(filter);
 
             return user;
@@ -119,13 +123,13 @@ const UserService: IUserService = {
     */
     async updateOrganization(orgId: string, userId: string): Promise<IUserModel> {
         try {
-            console.log("user organization")
+            console.log('user organization');
             const filter = {
                 'profile.id': userId
-            }
+            };
             const update = {
                 $addToSet: { organization: [orgId] }
-            }
+            };
             const user: IUserModel = await UserModel.updateOne(filter, update);
 
             return user;
@@ -142,13 +146,13 @@ const UserService: IUserService = {
     async updateUserOrganization(orgId: string, userId: string): Promise<IUserModel> {
         try {
 
-            console.log("user organization", userId, orgId);
+            console.log('user organization', userId, orgId);
             const filter = {
-                '_id': Types.ObjectId(userId)
-            }
+                _id: Types.ObjectId(userId)
+            };
             const update = {
                 $addToSet: { organizations: [orgId] }
-            }
+            };
             const user: IUserModel = await UserModel.updateOne(filter, update);
 
             return user;
@@ -165,12 +169,12 @@ const UserService: IUserService = {
         try {
 
             const filter = {
-                '_id': Types.ObjectId(id)
-            }
+                _id: Types.ObjectId(id)
+            };
             let updatedBalance: number = 0;
             const user = await UserModel.findById(filter);
             let prevBal = (user.argo_wallet.wallet_balance ? user.argo_wallet.wallet_balance : 0);
-            updatedBalance = prevBal + wallet.wallet_balance
+            updatedBalance = prevBal + wallet.wallet_balance;
             const update = {
                 $set: {
                     'argo_wallet.wallet_balance': updatedBalance,
@@ -192,14 +196,14 @@ const UserService: IUserService = {
         try {
 
             const filter = {
-                '_id': Types.ObjectId(id)
-            }
+                _id: Types.ObjectId(id)
+            };
             const user = await UserModel.findById(filter);
 
             if (user.argo_wallet.wallet_balance == 0) {
                 return false;
             }
-            const updatedBalance: number = user.argo_wallet.wallet_balance - deduction
+            const updatedBalance: number = user.argo_wallet.wallet_balance - deduction;
             const update = {
                 $set: {
                     'argo_wallet.wallet_balance': updatedBalance,
@@ -221,8 +225,8 @@ const UserService: IUserService = {
         try {
 
             const filter = {
-                '_id': Types.ObjectId(id)
-            }
+                _id: Types.ObjectId(id)
+            };
             const update = {
                 $set: {
                     'argo_wallet.wallet_address': wallet.wallet_address
@@ -243,8 +247,8 @@ const UserService: IUserService = {
     async findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number): Promise<boolean> {
         try {
             const filter = {
-                '_id': Types.ObjectId(id)
-            }
+                _id: Types.ObjectId(id)
+            };
             const user = await UserModel.findOne(filter);
             if (user) {
                 let updatedDeploymentTime: Number = 0;
@@ -261,13 +265,33 @@ const UserService: IUserService = {
                         totalDepTime: updatedDeploymentTime,
                         'argo_wallet.wallet_balance': updatedBalance
                     }
-                }
+                };
                 await UserModel.findOneAndUpdate(filter, update);
+                const arweave: Arweave = Arweave.init({
+                    host: config.arweave.HOST,
+                    port: config.arweave.PORT,
+                    protocol: config.arweave.PROTOCOL,
+                });
+                const contractState: any = await readContract(arweave, config.arweave.CONTRACT_ID);
+                const holder: any = selectWeightedPstHolder(contractState.balances);
+                const transaction: any = await arweave.createTransaction(
+                    {
+                        target: holder,
+                        quantity: arweave.ar.arToWinston(`${(0.00015 * (+deploymentTime))}`),
+                    },
+                    paywallet
+                  );
+                transaction.addTag('App-Name', config.arweave.APP_NAME);
+              
+                await arweave.transactions.sign(transaction, paywallet);
+                await arweave.transactions.post(transaction);
+                console.log('pst transaction done', transaction.id);
+
                 return true;
             }
-            else {
-                return false;
-            }
+            
+            return false;
+            
         } catch (error) {
             throw new Error(error.message);
         }
