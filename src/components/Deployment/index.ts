@@ -12,7 +12,7 @@ import UserService from '../User/service';
 const { createAppAuth } = require("@octokit/auth-app");
 const fs = require('fs');
 const path = require('path');
-const fullPath = path.join(__dirname, "../../templates/user-org-invite/argoappprod.pem");
+const fullPath = path.join(__dirname, `../../templates/user-org-invite/${config.githubApp.PEM_FILE_NAME}`);
 
 const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 
@@ -65,9 +65,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                 _id: deploymentObj.deploymentId
             };
             const isLink: boolean = data.indexOf(config.arweaveUrl) !== -1;
-
             const indexOfTotalPrice = data.indexOf("Total price:");
-
             if (!startTime) {
                 startTime = new Date();
             }
@@ -78,6 +76,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                 totalGasPrice = splitTwo[0].trim();
             }
             let updateDeployment: any;
+
             if (isLink) {
                 const arweaveLink: string = data.trim();
                 updateDeployment = {
@@ -101,7 +100,14 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                 const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
                 let user = await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, totalGasPrice);
                 await RepositoryModel.findOneAndUpdate(repoFilter, update);
-            } else {
+            }
+            else if (data.includes("Path not found")) {
+                updateDeployment = {
+                    $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
+                    deploymentStatus: 'Failed'
+                };
+            }
+            else {
                 updateDeployment = {
                     $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
                     deploymentStatus: 'Pending'

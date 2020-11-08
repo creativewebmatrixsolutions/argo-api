@@ -38,6 +38,7 @@ interface IConfig {
         GITHUB_APP_CLIENT_SECRET: string;
         GITHUB_APP_CALLBACK_URL: string;
         GIT_HUB_APP_ID: string;
+        PEM_FILE_NAME: string;
     },
     privateKey: {
         PRIVATE_KEY: string;
@@ -88,7 +89,8 @@ const development: IConfig = {
         GITHUB_APP_CLIENT_ID: process.env.GITHUB_APP_CLIENT_ID,
         GITHUB_APP_CLIENT_SECRET: process.env.GITHUB_APP_CLIENT_SECRET,
         GITHUB_APP_CALLBACK_URL: process.env.GITHUB_APP_CALLBACK_URL,
-        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID
+        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID,
+        PEM_FILE_NAME: process.env.PEM_FILE_NAME
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY
@@ -137,7 +139,8 @@ const production: IConfig = {
         GITHUB_APP_CLIENT_ID: process.env.GITHUB_APP_CLIENT_ID,
         GITHUB_APP_CLIENT_SECRET: process.env.GITHUB_APP_CLIENT_SECRET,
         GITHUB_APP_CALLBACK_URL: process.env.GITHUB_APP_CALLBACK_URL,
-        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID
+        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID,
+        PEM_FILE_NAME: process.env.PEM_FILE_NAME
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY
@@ -185,7 +188,8 @@ const test: IConfig = {
         GITHUB_APP_CLIENT_ID: process.env.GITHUB_APP_CLIENT_ID,
         GITHUB_APP_CLIENT_SECRET: process.env.GITHUB_APP_CLIENT_SECRET,
         GITHUB_APP_CALLBACK_URL: process.env.GITHUB_APP_CALLBACK_URL,
-        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID
+        GIT_HUB_APP_ID: process.env.GIT_HUB_APP_ID,
+        PEM_FILE_NAME: process.env.PEM_FILE_Name,
     },
     privateKey: {
         PRIVATE_KEY: process.env.PRIVATE_KEY

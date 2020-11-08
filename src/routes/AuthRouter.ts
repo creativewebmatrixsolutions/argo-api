@@ -14,7 +14,7 @@ const axios = require('axios').default;
 const fs = require('fs');
 const path = require('path');
 
-const fullPath = path.join(__dirname, "../templates/user-org-invite/argoappprod.pem");
+const fullPath = path.join(__dirname, `../templates/user-org-invite/${config.default.githubApp.PEM_FILE_NAME}`);
 
 const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 /**
