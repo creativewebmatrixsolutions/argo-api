@@ -133,6 +133,11 @@ router.delete('/:id', UserComponent.remove);
 
 router.put('/', UserComponent.update);
 
+router.put('/wallet/balance', UserComponent.updateWalletBalance);
+
+router.put('/wallet/address', UserComponent.updateWalletAddress);
+
+
 /**
  * @export {express.Router}
  */

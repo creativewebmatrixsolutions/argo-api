@@ -4,7 +4,10 @@ import { IRepository } from '../Organization/model';
 import { NextFunction, Request, Response } from 'express';
 import JWTTokenService from '../Session/service';
 import { IArgoSessionModel } from '../Session/model';
+import { Types } from 'mongoose';
+import GithubAppService from '../GitHubApp/service';
 const { Octokit } = require("@octokit/core");
+const axios = require('axios').default;
 
 // /**
 //  * @export
@@ -91,6 +94,33 @@ export async function findOneAndUpdate(req: Request, res: Response, next: NextFu
         const repositoryStatus: boolean = await RepositoryService.findOneAndUpdate(req.params.id, req.body)
         res.status(200).json({
             success: repositoryStatus
+        });
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export async function getInstallationRepos(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        console.log(req.params);
+        const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+        const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+        let id = Types.ObjectId(deserializedToken.session_id);
+        const getUserToken = await GithubAppService.findByUserId(id);
+        const instanceAxios = axios.create({
+            baseURL: `https://api.github.com/user/installations/${req.params.installationId}/repositories`,
+            timeout: 5000,
+            headers: {
+                'authorization': `bearer ${getUserToken.token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        const response = await instanceAxios.get();
+        console.log(response.data.repositories);
+        res.status(200).json({
+            success: true,
+            repositories: response.data.repositories
         });
 
     } catch (error) {

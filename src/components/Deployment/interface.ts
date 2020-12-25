@@ -12,6 +12,7 @@ export interface IInternalApiDto {
     github_url: string;
     folder_name: string;
     topic: string;
+    framework: string;
     package_manager: string;
     branch: string;
     build_command: string;
@@ -30,4 +31,5 @@ export interface IDeploymentDto {
     package_manager: string;
     deploymentStatus: string;
     github_url: string;
+    framework: string;
 }
