@@ -9,13 +9,13 @@ import DeploymentService from './service';
 import { Types } from 'mongoose';
 import JWTTokenService from '../Session/service';
 import UserService from '../User/service';
+import { IUserModel } from '../User/model';
 const { createAppAuth } = require("@octokit/auth-app");
 const fs = require('fs');
 const path = require('path');
 const fullPath = path.join(__dirname, `../../templates/user-org-invite/${config.githubApp.PEM_FILE_NAME}`);
 
 const readAsAsync = fs.readFileSync(fullPath, 'utf8');
-
 const io: any = require('socket.io-client');
 
 const Server: any = require('socket.io');
@@ -32,6 +32,17 @@ const socket: any = io(config.flaskApi.BASE_ADDRESS);
  */
 export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+        const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+
+        console.log('I am in deployment', argoDecodedHeaderToken);
+
+        const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+
+        console.log('Deserialized Token In Deplyment: ', deserializedToken);
+
+        console.log(deserializedToken.session_id);
+        const user: IUserModel = await UserService.findOne(deserializedToken.session_id);
+        console.log(user);
         const uniqueTopicName: string = uuidv4();
         const splitUrl: string = req.body.github_url.split('/');
         const folderName: string = splitUrl[splitUrl.length - 1].split('.')[0];
@@ -39,7 +50,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         console.log(req.body.isPrivate);
         if (req.body.isPrivate) {
             let installationToken = await createInstallationToken(req.body.installationId, req.body.repositoryId);
-            fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/izrake/${folderName}.git`
+            fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/${user.provider_profile.username}/${folderName}.git`
         }
         else {
             fullGitHubPath = `${req.body.github_url} --branch ${req.body.branch}`;

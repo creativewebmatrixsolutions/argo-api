@@ -5,6 +5,12 @@ import { IArgoSessionModel } from '../Session/model';
 const { Octokit } = require('@octokit/core');
 import config from '../../config/env/index';
 import { Request } from 'express';
+const { createAppAuth } = require("@octokit/auth-app");
+const fs = require('fs');
+const path = require('path');
+const fullPath = path.join(__dirname, `../../templates/user-org-invite/${config.githubApp.PEM_FILE_NAME}`);
+
+const readAsAsync = fs.readFileSync(fullPath, 'utf8');
 
 /**
  * @export
@@ -25,7 +31,8 @@ const WebHookService: IWebHookService = {
             const argoSession: IArgoSessionModel = await JWTTokenService.FindOneBySessionId(
                 decodeToken.session_id
             );
-            const octokit: any = new Octokit({ auth: `${argoSession.access_token}` });
+            let installationToken = await createInstallationToken(req.body.installationId, req.body.repositoryId);
+            const octokit: any = new Octokit({ auth: `${installationToken.token}` });
             const response: any = await octokit.request(
                 'POST /repos/{owner}/{repo}/hooks',
                 {
@@ -46,6 +53,20 @@ const WebHookService: IWebHookService = {
         }
     },
 };
+
+const createInstallationToken = async (installationId: any, repositoryId: any) => {
+    const auth = await createAppAuth({
+        id: config.githubApp.GIT_HUB_APP_ID,
+        privateKey: readAsAsync,
+        installationId: installationId,
+        clientId: config.githubApp.GITHUB_APP_CLIENT_ID,
+        clientSecret: config.githubApp.GITHUB_APP_CLIENT_SECRET,
+    });
+    const authToken = await auth({ type: "app" });
+    const installationToken = await auth({ type: "installation" });
+    console.log(installationToken);
+    return installationToken;
+}
 
 export default WebHookService;
 
