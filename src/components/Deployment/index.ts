@@ -117,6 +117,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                     $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
                     deploymentStatus: 'Failed'
                 };
+                await ReduceBalanceAndUpdateTime(startTime, req);
             }
             else {
                 updateDeployment = {
@@ -140,6 +141,16 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         next(new HttpError(error.message.status, error.message));
     }
 }
+
+const ReduceBalanceAndUpdateTime = async (startTime: any, req: any) => {
+    const endDateTime: any = new Date();
+    const totalTime = Math.abs(endDateTime - startTime);
+    const deploymentTime: number = parseInt((totalTime / 1000).toFixed(1));
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, 0);
+}
+
 
 export async function FindDeploymentById(req: Request, res: Response, next: NextFunction): Promise<void> {
     const deployment: IDeployment = await DeploymentService.FindOneDeployment(req.params.id);
