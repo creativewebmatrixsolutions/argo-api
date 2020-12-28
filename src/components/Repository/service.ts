@@ -36,7 +36,7 @@ const RepositoryService: IRepositoryService = {
             const repository: IRepository = await RepositoryModel.findOne({
                 name: repoName, branch: branchName
             }).select('name package_manager build_command publish_dir -_id');
-            
+
             return repository;
         } catch (error) {
             throw new Error(error.message);
@@ -93,7 +93,24 @@ const RepositoryService: IRepositoryService = {
         } catch (error) {
             throw new Error(error.message);
         }
-    },
+    }, async findOneAndUpdateDomain(id: string, domain: string, transactionId: string): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(id)
+            };
+            const update = {
+                $set: {
+                    'domain': domain,
+                    'transactionId': transactionId
+                }
+            }
+            await RepositoryModel.findOneAndUpdate(filter, update);
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 };
 
 export default RepositoryService;

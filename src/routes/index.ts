@@ -12,6 +12,7 @@ import WebHookRouter from './WebHookRouter';
 import LogsRouter from './LogsRouter';
 
 import RepositoryService from '../components/Repository/service';
+import DomainRouter from './DomainRouter';
 
 let swaggerDoc: Object;
 
@@ -81,6 +82,7 @@ export function init(app: express.Application): void {
     app.use('/invite', passportConfig.isAuthenticated, InvitationRouter);
 
 
+    app.use('/domain', passportConfig.isAuthenticated, DomainRouter);
     app.use('/logs', LogsRouter);
     /**
      * @description
