@@ -21,8 +21,14 @@ export interface IRepository extends Document {
     branch: string;
     sitePreview: string;
     framework: string;
-    domain: string;
-    transactionId: string;
+    domains: [{
+        name: string,
+        transactionId: string,
+    }],
+    subDomains: [{
+        name: string,
+        transactionId: string,
+    }]
 }
 
 /**
@@ -81,8 +87,14 @@ const RepositorySchema: Schema = new Schema({
     branch: String,
     sitePreview: String,
     framework: String,
-    domain: String,
-    transactionId: String
+    domains: [{
+        name: String,
+        transactionId: String,
+    }],
+    subDomains: [{
+        name: String,
+        transactionId: String,
+    }]
 });
 
 const DeploymentSchema: Schema = new Schema({

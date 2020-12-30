@@ -17,13 +17,75 @@ router.post('/', async (req: any, res: any) => {
     if (getUserToken) {
         var sendRequest = await sendAddRequest(req);
         if (sendRequest) {
-            RepositoryService.findOneAndUpdateDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+            let result = await RepositoryService.InsertDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+            if (!result) {
+                res.status(200).json({
+                    success: false
+                });
+            } else {
+                res.status(200).json({
+                    success: true
+                });
+            }
+        }
+    }
+
+});
+
+router.post('/subdomain', async (req: any, res: any) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        var sendRequest = await sendAddRequest(req);
+        if (sendRequest) {
+            let result = await RepositoryService.InsertSubDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+            if (!result) {
+                res.status(200).json({
+                    success: false
+                });
+            }
+        }
+        else {
+            res.status(200).json({
+                success: true
+            });
+        }
+    }
+
+});
+
+router.put('/', async (req: any, res: any) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        let sendRequest = await sendAddRequest(req);
+        if (sendRequest) {
+            await RepositoryService.UpdateDomain(req.body.domainId, req.body.domain, req.body.transactionId);
         }
     }
     res.status(200).json({
         success: true
     });
 });
+router.put('/subdomain', async (req: any, res: any) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        let sendRequest = await sendAddRequest(req);
+        if (sendRequest) {
+            await RepositoryService.UpdateSubDomain(req.body.domainId, req.body.domain, req.body.transactionId);
+        }
+    }
+    res.status(200).json({
+        success: true
+    });
+})
 
 const sendAddRequest = async (req: any): Promise<any> => {
     return new Promise((resolve, reject) => {
