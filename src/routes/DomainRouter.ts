@@ -46,11 +46,11 @@ router.post('/subdomain', async (req: any, res: any) => {
                     success: false
                 });
             }
-        }
-        else {
-            res.status(200).json({
-                success: true
-            });
+            else {
+                res.status(200).json({
+                    success: true
+                });
+            }
         }
     }
 

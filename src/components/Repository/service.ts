@@ -125,6 +125,7 @@ const RepositoryService: IRepositoryService = {
             if (validateName) {
                 return false;
             }
+
             if (repo) {
                 var addSubDomain = { name: domain, transactionId: transactionId };
                 repo.subDomains.push(addSubDomain);
