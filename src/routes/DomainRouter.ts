@@ -104,7 +104,7 @@ router.delete('/subdomain', async (req: any, res: any) => {
     let id = Types.ObjectId(deserializedToken.session_id);
     const getUserToken = await GithubAppService.findByUserId(id);
     if (getUserToken) {
-        await RepositoryService.RemoveDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+        await RepositoryService.RemoveSubDomain(req.body.domainId);
     }
     res.status(200).json({
         success: true
@@ -117,7 +117,7 @@ router.delete('/', async (req: any, res: any) => {
     let id = Types.ObjectId(deserializedToken.session_id);
     const getUserToken = await GithubAppService.findByUserId(id);
     if (getUserToken) {
-        await RepositoryService.RemoveDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+        await RepositoryService.RemoveDomain(req.body.domainId);
     }
     res.status(200).json({
         success: true
