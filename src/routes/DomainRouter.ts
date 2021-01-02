@@ -66,10 +66,17 @@ router.put('/', async (req: any, res: any) => {
         if (sendRequest) {
             await RepositoryService.UpdateDomain(req.body.domainId, req.body.domain, req.body.transactionId);
         }
+        else {
+            res.status(200).json({
+                success: true
+            });
+        }
     }
+
     res.status(200).json({
-        success: true
+        success: false
     });
+
 });
 router.put('/subdomain', async (req: any, res: any) => {
     const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
@@ -80,12 +87,42 @@ router.put('/subdomain', async (req: any, res: any) => {
         let sendRequest = await sendAddRequest(req);
         if (sendRequest) {
             await RepositoryService.UpdateSubDomain(req.body.domainId, req.body.domain, req.body.transactionId);
+        } else {
+            res.status(200).json({
+                success: true
+            });
         }
+    }
+    res.status(200).json({
+        success: false
+    });
+});
+
+router.delete('/subdomain', async (req: any, res: any) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        await RepositoryService.RemoveDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
     }
     res.status(200).json({
         success: true
     });
-})
+});
+
+router.delete('/', async (req: any, res: any) => {
+    const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+    const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+    let id = Types.ObjectId(deserializedToken.session_id);
+    const getUserToken = await GithubAppService.findByUserId(id);
+    if (getUserToken) {
+        await RepositoryService.RemoveDomain(req.body.repositoryId, req.body.domain, req.body.transactionId);
+    }
+    res.status(200).json({
+        success: true
+    });
+});
 
 const sendAddRequest = async (req: any): Promise<any> => {
     return new Promise((resolve, reject) => {
