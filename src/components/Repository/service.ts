@@ -178,9 +178,9 @@ const RepositoryService: IRepositoryService = {
     async RemoveSubDomain(id: string, repositoryId: string): Promise<any> {
         try {
             const filter = {
-                '_id': Types.ObjectId(id)
+                '_id': Types.ObjectId(repositoryId)
             };
-            await RepositoryModel.updateOne({}, { $pull: { subDomains: { _id: Types.ObjectId(id) } } });
+            await RepositoryModel.updateOne(filter, { $pull: { subDomains: { _id: Types.ObjectId(id) } } });
             return true;
 
         } catch (error) {
