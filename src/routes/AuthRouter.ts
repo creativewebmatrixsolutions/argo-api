@@ -48,7 +48,7 @@ router.get(
         failureRedirect: `${config.default.argoReact.BASE_ADDRESS}/signup`,
     }),
     async (req, res) => {
-        console.log(req.user.profile);
+        console.log("Hii", req.user.profile);
         const userProfileModel: IUserModel = await AuthService.findProfileOrCreate({
             provider_profile: {
                 ...req.user.profile._json,
@@ -78,6 +78,7 @@ router.get(
             argoSessionDto
         );
         const token: string = await JWTTokenService.generateToken(dtos);
+        console.log("Base address", config.default.argoReact.BASE_ADDRESS)
 
         res.redirect(`${config.default.argoReact.BASE_ADDRESS}/callback/github?token=${token}`);
     }

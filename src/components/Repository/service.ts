@@ -175,7 +175,7 @@ const RepositoryService: IRepositoryService = {
             throw new Error(error.message);
         }
     },
-    async RemoveSubDomain(id: string): Promise<any> {
+    async RemoveSubDomain(id: string, repositoryId: string): Promise<any> {
         try {
             const filter = {
                 '_id': Types.ObjectId(id)
@@ -188,12 +188,12 @@ const RepositoryService: IRepositoryService = {
         }
     },
 
-    async RemoveDomain(id: string): Promise<any> {
+    async RemoveDomain(id: string, repositoryId: string): Promise<any> {
         try {
             const filter = {
-                '_id': Types.ObjectId(id)
+                '_id': Types.ObjectId(repositoryId)
             };
-            await RepositoryModel.updateOne({}, { $pull: { domains: { _id: Types.ObjectId(id) } } });
+            await RepositoryModel.updateOne(filter, { $pull: { domains: { _id: Types.ObjectId(id) } } });
             return true;
 
         } catch (error) {

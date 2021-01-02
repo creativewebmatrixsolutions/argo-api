@@ -37,7 +37,7 @@ export interface IRepositoryService {
     UpdateDomain(id: string, domain: string, transactionId: string): Promise<any>;
     UpdateSubDomain(id: string, domain: string, transactionId: string): Promise<any>;
 
-    RemoveSubDomain(id: string): Promise<any>;
+    RemoveSubDomain(id: string, repositoryId: string): Promise<any>;
 
-    RemoveDomain(id: string): Promise<any>;
+    RemoveDomain(id: string, repositoryId: string): Promise<any>;
 }
