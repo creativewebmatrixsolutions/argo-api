@@ -80,7 +80,7 @@ const development: IConfig = {
         BASE_ADDRESS: process.env.INTERNAL_API_BASE_ADDRESS || "http://localhost:5000/"
     },
     argoReact: {
-        BASE_ADDRESS: process.env.INTERNAL_FE_BASE_ADDRESS || "http://localhost:3000"
+        BASE_ADDRESS: "http://localhost:3000"
     },
     secret: process.env.SECRET || '@QEGTUIARGOTEST',
     pushNotifyUrl: process.env.PUSH_NOTIFY_URL,
@@ -96,7 +96,7 @@ const development: IConfig = {
         PRIVATE_KEY: process.env.PRIVATE_KEY
     },
     arweave: {
-        CONTRACT_ID: process.env.ARWEAVE_CONTRACT_ID || 'ZT-70ovBlkF6cRIqvyHy5lC2LcjudsmCz9z19M4_QC4',
+        CONTRACT_ID: process.env.ARWEAVE_CONTRACT_ID,
         HOST: process.env.ARWEAVE_HOST || 'arweave.net',
         PORT: +process.env.ARWEAVE_PORT || 443,
         PROTOCOL: process.env.ARWEAVE_PROTOCOL || 'https',
