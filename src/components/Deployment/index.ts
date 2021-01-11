@@ -45,7 +45,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         console.log(user);
         const uniqueTopicName: string = uuidv4();
         const splitUrl: string = req.body.github_url.split('/');
-        const folderName: string = splitUrl[splitUrl.length - 1].split('.')[0];
+        const folderName: string = splitUrl[splitUrl.length - 1].slice(0, -4);
         let fullGitHubPath: string;
         console.log(req.body.isPrivate);
         if (req.body.isPrivate) {
@@ -63,7 +63,9 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             package_manager: req.body.package_manager,
             branch: req.body.branch,
             build_command: req.body.build_command,
-            publish_dir: req.body.publish_dir
+            publish_dir: req.body.publish_dir,
+            workspace: req.body.workspace,
+            is_workspace: req.body.workspace !== '' || req.body.workspace !== undefined
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
 
@@ -117,7 +119,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                     $addToSet: { logs: [{ time: new Date().toString(), log: data }] },
                     deploymentStatus: 'Failed'
                 };
-                await ReduceBalanceAndUpdateTime(startTime, req);
+                await ReduceBalanceAndUpdateTime(startTime, req, 'Failed');
             }
             else {
                 updateDeployment = {
@@ -142,13 +144,13 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
     }
 }
 
-const ReduceBalanceAndUpdateTime = async (startTime: any, req: any) => {
+const ReduceBalanceAndUpdateTime = async (startTime: any, req: any, status: string) => {
     const endDateTime: any = new Date();
     const totalTime = Math.abs(endDateTime - startTime);
     const deploymentTime: number = parseInt((totalTime / 1000).toFixed(1));
     const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
     const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-    await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, 0);
+    await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, 0, status);
 }
 
 

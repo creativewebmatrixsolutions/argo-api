@@ -243,7 +243,7 @@ const UserService: IUserService = {
     * @returns {Promise < IUserModel >}
     * @memberof UserService
     */
-    async findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number): Promise<boolean> {
+    async findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number, status: string): Promise<boolean> {
         try {
             const filter = {
                 _id: Types.ObjectId(id)
@@ -271,22 +271,23 @@ const UserService: IUserService = {
                     port: config.arweave.PORT,
                     protocol: config.arweave.PROTOCOL,
                 });
-                let paywallet: string = config.privateKey.PRIVATE_KEY;
-                const contractState: any = await readContract(arweave, config.arweave.CONTRACT_ID);
-                const holder: any = selectWeightedPstHolder(contractState.balances);
-                const transaction: any = await arweave.createTransaction(
-                    {
-                        target: holder,
-                        quantity: arweave.ar.arToWinston(`${(0.00015 * (+deploymentTime))}`),
-                    },
-                    JSON.parse(paywallet)
-                );
-                transaction.addTag('App-Name', config.arweave.APP_NAME);
+                if (status !== 'Failed') {
+                    let paywallet: string = config.privateKey.PRIVATE_KEY;
+                    const contractState: any = await readContract(arweave, config.arweave.CONTRACT_ID);
+                    const holder: any = selectWeightedPstHolder(contractState.balances);
+                    const transaction: any = await arweave.createTransaction(
+                        {
+                            target: holder,
+                            quantity: arweave.ar.arToWinston(`${(0.00015 * (+deploymentTime))}`),
+                        },
+                        JSON.parse(paywallet)
+                    );
+                    transaction.addTag('App-Name', config.arweave.APP_NAME);
 
-                await arweave.transactions.sign(transaction, JSON.parse(paywallet));
-                await arweave.transactions.post(transaction);
-                console.log('pst transaction done', transaction.id);
-
+                    await arweave.transactions.sign(transaction, JSON.parse(paywallet));
+                    await arweave.transactions.post(transaction);
+                    console.log('pst transaction done', transaction.id);
+                }
                 return true;
             }
 

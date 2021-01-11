@@ -17,6 +17,8 @@ export interface IInternalApiDto {
     branch: string;
     build_command: string;
     publish_dir: string;
+    workspace: string;
+    is_workspace: boolean;
 }
 
 export interface IDeploymentDto {
