@@ -64,8 +64,8 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             branch: req.body.branch,
             build_command: req.body.build_command,
             publish_dir: req.body.publish_dir,
-            workspace: req.body.workspace !== undefined || req.body.workspace !== '' ? req.body.workspace : '',
-            is_workspace: req.body.workspace !== '' || req.body.workspace !== undefined
+            workspace: !!req.body.workspace ? req.body.workspace : '',
+            is_workspace: !!req.body.workspace
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
 
