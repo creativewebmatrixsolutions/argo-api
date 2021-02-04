@@ -50,7 +50,7 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
         console.log(req.body.isPrivate);
         if (req.body.isPrivate) {
             let installationToken = await createInstallationToken(req.body.installationId, req.body.repositoryId);
-            fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/${user.provider_profile.username}/${folderName}.git`
+            fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/${req.body.owner}/${folderName}.git`;
         }
         else {
             fullGitHubPath = `${req.body.github_url} --branch ${req.body.branch}`;
