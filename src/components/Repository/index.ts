@@ -126,5 +126,33 @@ export async function getInstallationRepos(req: Request, res: Response, next: Ne
     } catch (error) {
         throw new Error(error)
     }
+
+
+}
+
+export async function getBranches(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
+        const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
+        let id = Types.ObjectId(deserializedToken.session_id);
+        const getUserToken = await GithubAppService.findByUserId(id);
+        const instanceAxiosBranch = axios.create({
+            baseURL: req.query.branches,
+            timeout: 5000,
+            headers: {
+                'authorization': `bearer ${getUserToken.token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        const response = await instanceAxiosBranch.get();
+        console.log("branches", response);
+        res.status(200).json({
+            success: true,
+            branches: response.data
+        });
+
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 

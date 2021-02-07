@@ -150,7 +150,7 @@ const production: IConfig = {
         HOST: process.env.ARWEAVE_HOST || 'arweave.net',
         PORT: +process.env.ARWEAVE_PORT || 443,
         PROTOCOL: process.env.ARWEAVE_PROTOCOL || 'https',
-        APP_NAME: process.env.ARWEAVE_APP_NAME || 'ARGO_APP_LIVE',
+        APP_NAME: process.env.ARWEAVE_APP_NAME || 'ArGoApp/2.0.0',
     }
 };
 const test: IConfig = {

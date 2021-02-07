@@ -13,6 +13,8 @@ router.put('/:id', RepositoryComponent.findOneAndUpdate);
 
 router.get('/installations/:installationId', RepositoryComponent.getInstallationRepos);
 
+router.get('/installations/repo/branch', RepositoryComponent.getBranches);
+
 //router.get('/github/getcommits', RepositoryComponent.GetCommits);
 
 export default router;
