@@ -36,7 +36,7 @@ const RepositoryService: IRepositoryService = {
             const repository: IRepository = await RepositoryModel.findOne({
                 name: repoName, branch: branchName
             }).select('name package_manager build_command publish_dir -_id');
-            
+
             return repository;
         } catch (error) {
             throw new Error(error.message);
@@ -93,7 +93,113 @@ const RepositoryService: IRepositoryService = {
         } catch (error) {
             throw new Error(error.message);
         }
+    }, async InsertDomain(id: string, domain: string, transactionId: string): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(id)
+            };
+            var repo = await RepositoryModel.findOne(filter);
+            var validateName = repo.domains.find(d => d.name === domain);
+            if (validateName) {
+                return false;
+            }
+            if (repo) {
+                var addDomain = { name: domain, transactionId: transactionId };
+                repo.domains.push(addDomain);
+                await repo.save();
+            }
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
     },
+
+    async InsertSubDomain(id: string, domain: string, transactionId: string): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(id)
+            };
+            var repo = await RepositoryModel.findOne(filter);
+            var validateName = repo.subDomains.find(d => d.name === domain);
+            if (validateName) {
+                return false;
+            }
+
+            if (repo) {
+                var addSubDomain = { name: domain, transactionId: transactionId };
+                repo.subDomains.push(addSubDomain);
+                await repo.save();
+            }
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    async UpdateDomain(id: string, domain: string, transactionId: string): Promise<any> {
+        try {
+            const filter = {
+                'domains._id': Types.ObjectId(id)
+            };
+
+            const updatCondition = {
+                $set: {
+                    'domains.$.name': domain,
+                    'domains.$.transactionId': transactionId
+                }
+            }
+            await RepositoryModel.findOneAndUpdate(filter, updatCondition);
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    async UpdateSubDomain(id: string, domain: string, transactionId: string): Promise<any> {
+        try {
+            const filter = {
+                'subDomains._id': Types.ObjectId(id)
+            };
+            const updatCondition = {
+                $set: {
+                    'subDomains.$.name': domain,
+                    'subDomains.$.transactionId': transactionId
+                }
+            }
+            await RepositoryModel.findOneAndUpdate(filter, updatCondition);
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    async RemoveSubDomain(id: string, repositoryId: string): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(repositoryId)
+            };
+            await RepositoryModel.updateOne(filter, { $pull: { subDomains: { _id: Types.ObjectId(id) } } });
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    async RemoveDomain(id: string, repositoryId: string): Promise<any> {
+        try {
+            const filter = {
+                '_id': Types.ObjectId(repositoryId)
+            };
+            await RepositoryModel.updateOne(filter, { $pull: { domains: { _id: Types.ObjectId(id) } } });
+            return true;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 };
 
 export default RepositoryService;

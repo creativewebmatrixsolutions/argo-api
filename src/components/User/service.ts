@@ -6,7 +6,6 @@ import { Types } from 'mongoose';
 import { readContract, selectWeightedPstHolder } from 'smartweave';
 import Arweave = require('arweave');
 import config from '../../config/env';
-//const paywallet: any = require('../../templates/user-org-invite/arweave-keyfile-WCx054sIZjvbkZpCdaRYVLD5Z2fXmg7fH_C-8bRztKA.json');
 
 /**
  * @export
@@ -244,7 +243,7 @@ const UserService: IUserService = {
     * @returns {Promise < IUserModel >}
     * @memberof UserService
     */
-    async findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number): Promise<boolean> {
+    async findOneAndUpdateDepTime(id: string, deploymentTime: number, gasPrice: number, status: string): Promise<boolean> {
         try {
             const filter = {
                 _id: Types.ObjectId(id)
@@ -267,33 +266,33 @@ const UserService: IUserService = {
                     }
                 };
                 await UserModel.findOneAndUpdate(filter, update);
-                // const arweave: Arweave = Arweave.init({
-                //     host: config.arweave.HOST,
-                //     port: config.arweave.PORT,
-                //     protocol: config.arweave.PROTOCOL,
-                // });
-                // const contractState: any = await readContract(arweave, config.arweave.CONTRACT_ID);
-                // const holder: any = selectWeightedPstHolder(contractState.balances);
-                // const transaction: any = await arweave.createTransaction(
-                //     {
-                //         target: holder,
-                //         quantity: arweave.ar.arToWinston(`${(0.00015 * (+deploymentTime))}`),
-                //     },
-                //     paywallet
-                // );
-                // transaction.addTag('App-Name', config.arweave.APP_NAME);
+                const arweave: Arweave = Arweave.init({
+                    host: config.arweave.HOST,
+                    port: config.arweave.PORT,
+                    protocol: config.arweave.PROTOCOL,
+                });
+                let paywallet: string = config.privateKey.PRIVATE_KEY;
+                const contractState: any = await readContract(arweave, config.arweave.CONTRACT_ID);
+                const holder: any = selectWeightedPstHolder(contractState.balances);
+                const transaction: any = await arweave.createTransaction(
+                    {
+                        target: holder,
+                        quantity: arweave.ar.arToWinston(`${(0.00015 * (+deploymentTime))}`),
+                    },
+                    JSON.parse(paywallet)
+                );
+                transaction.addTag('App-Name', config.arweave.APP_NAME);
 
-                // await arweave.transactions.sign(transaction, paywallet);
-                // await arweave.transactions.post(transaction);
-                // console.log('pst transaction done', transaction.id);
-
+                await arweave.transactions.sign(transaction, JSON.parse(paywallet));
+                await arweave.transactions.post(transaction);
+                console.log('pst transaction done', transaction.id);
                 return true;
             }
 
             return false;
 
         } catch (error) {
-            throw new Error(error.message);
+            return true
         }
     }
 };

@@ -29,4 +29,15 @@ export interface IRepositoryService {
     insert(repository: IRepository, organizationId: string): Promise<IRepository>;
 
     findOneAndUpdate(id: string, body: any): Promise<boolean>;
+
+    InsertDomain(id: string, domain: string, transactionId: string): Promise<boolean>;
+
+    InsertSubDomain(id: string, domain: string, transactionId: string): Promise<any>;
+
+    UpdateDomain(id: string, domain: string, transactionId: string): Promise<any>;
+    UpdateSubDomain(id: string, domain: string, transactionId: string): Promise<any>;
+
+    RemoveSubDomain(id: string, repositoryId: string): Promise<any>;
+
+    RemoveDomain(id: string, repositoryId: string): Promise<any>;
 }
