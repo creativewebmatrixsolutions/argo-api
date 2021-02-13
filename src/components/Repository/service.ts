@@ -1,7 +1,10 @@
+import Arweave = require('arweave');
 import { Types } from 'mongoose';
 import { IRepository, IOrganization, OrganizationModel, RepositoryModel } from '../Organization/model';
 import { IRepositoryService } from './interface';
-
+import config from '../../config/env';
+import deepHash from 'arweave/node/lib/deepHash';
+import ArweaveBundles, { DataItemJson } from 'arweave-bundles';
 
 /**
  * @export
@@ -199,7 +202,86 @@ const RepositoryService: IRepositoryService = {
         } catch (error) {
             throw new Error(error.message);
         }
+    },
+    async FindOneAndUpdate(id: string, link: string): Promise<number> {
+        try {
+            const repoFilter: any = {
+                _id: Types.ObjectId(id)
+            };
+            let getRepo = await RepositoryModel.findOne(repoFilter);
+            let arrDomains: Array<string> = [];
+            if (getRepo) {
+                // pull domains which has latest transactionIds
+                for (let val in getRepo.domains) {
+                    if (getRepo.domains[val].transactionId === "Latest" || getRepo.domains[val].transactionId === "latest") {
+                        arrDomains.push(getRepo.domains[val].name);
+                    }
+                }
+                for (let val in getRepo.subDomains) {
+                    if (getRepo.subDomains[val].transactionId === "Latest" || getRepo.domains[val].transactionId === "latest") {
+                        arrDomains.push(getRepo.subDomains[val].name);
+                    }
+                }
+            }
+            getRepo.sitePreview = link;
+            await getRepo.save();
+            if (arrDomains.length > 0) {
+                const splitLink = link.split('/');
+                const tx = splitLink[splitLink.length - 1];
+                return await executeBundledTx(arrDomains, tx);
+            }
+            return 0;
+
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 };
+
+const executeBundledTx = async (domain: string[], txId: string) => {
+    const arweave: Arweave = Arweave.init({
+        host: "arweave.net",
+        port: 443,
+        protocol: "https",
+    });
+    const deps = {
+        utils: Arweave.utils,
+        crypto: Arweave.crypto,
+        deepHash: deepHash,
+    }
+    const arBundles = ArweaveBundles(deps);
+    let newTag: Array<any> = [];
+    let dataItemJson: DataItemJson[] = [];
+    let wallet: string = config.privateKey.PRIVATE_KEY;
+    var walletParsed = JSON.parse(wallet);
+    for (var val in domain) {
+        let tag = [{
+            name: "Content-Type",
+            value: "x-arweave/name-update"
+        }, {
+            name: "Arweave-Domain",
+            value: domain[val]
+        }, {
+            name: "Arweave-Hash",
+            value: txId
+        }
+        ]
+        let createData = await arBundles.createData({ data: "creating bundles", tags: tag }, walletParsed)
+        newTag.push(createData);
+    }
+    for (let val in newTag) {
+
+        let sign = await arBundles.sign(newTag[val], JSON.parse(wallet));
+        dataItemJson.push(sign);
+    }
+
+    const bundles = await arBundles.bundleData(dataItemJson);
+    let bundledString = JSON.stringify(bundles);
+    const myTx = await arweave.createTransaction({ data: bundledString }, JSON.parse(wallet));
+    await arweave.transactions.sign(myTx, JSON.parse(wallet));
+    await arweave.transactions.post(myTx);
+    let ar = arweave.ar.winstonToAr(myTx.reward);
+    return parseInt(ar);
+}
 
 export default RepositoryService;

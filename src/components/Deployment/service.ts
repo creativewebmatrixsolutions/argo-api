@@ -50,7 +50,6 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
 
     console.log('giturl: ', body.github_url);
     const findOneRepo: IRepository = await RepositoryModel.findOne(filter);
-
     if (findOneRepo) {
 
         console.log(findOneRepo);
@@ -60,6 +59,9 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         const updateDeploymentId = {
             $addToSet: {
                 deployments: [deploymentId]
+            },
+            $set: {
+                workspace: body.workspace
             },
             updateDate: new Date()
         }
@@ -77,7 +79,8 @@ const findOneAndCreateRepo = async (body: any, deploymentId: Types.ObjectId): Pr
         build_command: body.build_command,
         publish_dir: body.publish_dir,
         branch: body.branch,
-        framework: body.framework
+        framework: body.framework,
+        workspace: body.workspace
     };
     const repository: IRepository = await RepositoryModel.create(update);
     const orgFilter = {

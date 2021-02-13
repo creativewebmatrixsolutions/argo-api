@@ -40,4 +40,6 @@ export interface IRepositoryService {
     RemoveSubDomain(id: string, repositoryId: string): Promise<any>;
 
     RemoveDomain(id: string, repositoryId: string): Promise<any>;
+
+    FindOneAndUpdate(id: string, link: string): Promise<number>;
 }

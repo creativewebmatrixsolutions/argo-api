@@ -28,7 +28,9 @@ export interface IRepository extends Document {
     subDomains: [{
         name: string,
         transactionId: string,
-    }]
+    }],
+    workspace: string,
+    deploymentType: string
 }
 
 /**
@@ -94,7 +96,11 @@ const RepositorySchema: Schema = new Schema({
     subDomains: [{
         name: String,
         transactionId: String,
-    }]
+    }],
+    deploymentType: {
+        type: { type: String, default: "Regular" }
+    },
+    workspace: String
 });
 
 const DeploymentSchema: Schema = new Schema({

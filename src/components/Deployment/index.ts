@@ -10,6 +10,7 @@ import { Types } from 'mongoose';
 import JWTTokenService from '../Session/service';
 import UserService from '../User/service';
 import { IUserModel } from '../User/model';
+import RepositoryService from '../Repository/service';
 const { createAppAuth } = require("@octokit/auth-app");
 const fs = require('fs');
 const path = require('path');
@@ -33,21 +34,16 @@ const socket: any = io(config.flaskApi.BASE_ADDRESS);
 export async function Deploy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
-
-        console.log('I am in deployment', argoDecodedHeaderToken);
-
         const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
 
         console.log('Deserialized Token In Deplyment: ', deserializedToken);
 
         console.log(deserializedToken.session_id);
         const user: IUserModel = await UserService.findOne(deserializedToken.session_id);
-        console.log(user);
         const uniqueTopicName: string = uuidv4();
         const splitUrl: string = req.body.github_url.split('/');
         const folderName: string = splitUrl[splitUrl.length - 1].slice(0, -4);
         let fullGitHubPath: string;
-        console.log(req.body.isPrivate);
         if (req.body.isPrivate) {
             let installationToken = await createInstallationToken(req.body.installationId, req.body.repositoryId);
             fullGitHubPath = `https://x-access-token:${installationToken.token}@github.com/${req.body.owner}/${folderName}.git`;
@@ -68,8 +64,6 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
             is_workspace: !!req.body.workspace
         };
         const deploymentObj: any = await DeploymentService.createAndDeployRepo(req.body, uniqueTopicName);
-
-        const globalPrice: number = 0;
         let startTime: any;
         let totalGasPrice: number = 0;
         socket.on(uniqueTopicName, async (data: any) => {
@@ -97,22 +91,13 @@ export async function Deploy(req: Request, res: Response, next: NextFunction): P
                     sitePreview: arweaveLink,
                     deploymentStatus: 'Deployed'
                 };
-                const repoFilter: any = {
-                    _id: Types.ObjectId(deploymentObj.repositoryId)
-                };
-
-                const update: any = {
-                    $set: {
-                        sitePreview: arweaveLink
-                    }
-                };
                 const endDateTime: any = new Date();
                 const totalTime = Math.abs(endDateTime - startTime);
                 const deploymentTime: number = parseInt((totalTime / 1000).toFixed(1));
                 const argoDecodedHeaderToken: any = await JWTTokenService.DecodeToken(req);
                 const deserializedToken: any = await JWTTokenService.VerifyToken(argoDecodedHeaderToken);
-                let user = await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, totalGasPrice);
-                await RepositoryModel.findOneAndUpdate(repoFilter, update);
+                let gas: number = await RepositoryService.FindOneAndUpdate(deploymentObj.repositoryId, arweaveLink);
+                await UserService.findOneAndUpdateDepTime(deserializedToken.session_id, deploymentTime, totalGasPrice + gas);
             }
             else if (data.includes("Path not found")) {
                 updateDeployment = {
